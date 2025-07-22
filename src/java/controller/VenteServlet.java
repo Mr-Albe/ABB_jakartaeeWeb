@@ -1,79 +1,77 @@
-
 package controller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
 
+import java.io.IOException;
+import java.sql.SQLException;
+import java.time.LocalDate;
+
+import model.VenteModel;
+import serviceImplement.StationDao;
+import serviceImplement.VenteDao;
 
 public class VenteServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet VenteServlet</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet VenteServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
+    StationDao stationdao = null;
+    VenteDao venteDao = null;
+    VenteModel venteModel = null;
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        response.sendRedirect("vente/ajouter.jsp");
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        enregistrer(request, response);
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
+    protected void enregistrer(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        try {
+            int stationId = Integer.parseInt(request.getParameter("idStation"));
+            String typeCarburant = request.getParameter("typeCarburant");
+            int quantiteDemandee = Integer.parseInt(request.getParameter("quantite"));
+            double prixUnitaire = Double.parseDouble(request.getParameter("prixUnitaire"));
+            LocalDate dateVente = LocalDate.parse(request.getParameter("dateVente"));
+
+            stationdao = new StationDao();
+            int stockDisponible = stationdao.getquantiteParStationIdType(stationId, typeCarburant);
+
+            if (stockDisponible >= quantiteDemandee) {
+                venteModel = new VenteModel();
+                venteModel.setStationId(stationId);
+                venteModel.setTypeCarburant(typeCarburant);
+                venteModel.setQuantite(quantiteDemandee);
+                venteModel.setPrixUnitaire(prixUnitaire);
+                venteModel.setDateVente(dateVente);
+
+                venteDao = new VenteDao();
+                venteDao.ajouter(venteModel);
+
+                // Mettre a jour le stock dans la station apres la vente 
+//                stationdao.retirerQuantite(stationId, typeCarburant, quantiteDemandee);
+
+                response.sendRedirect(request.getContextPath() + "/VenteServlet");
+            } else {
+                request.setAttribute("erreur", "La quantité disponible en " + typeCarburant + " est insuffisante pour effectuer cette vente.");
+                request.getRequestDispatcher("vente/ajouter.jsp").forward(request, response);
+            }
+
+        } catch (SQLException | ClassNotFoundException | NumberFormatException e) {
+            request.setAttribute("erreur", "Erreur lors de l’enregistrement de la vente : " + e.getMessage());
+            request.getRequestDispatcher("vente/ajouter.jsp").forward(request, response);
+        }
+    }
+
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "Servlet de gestion des ventes de carburant.";
+    }
 }
