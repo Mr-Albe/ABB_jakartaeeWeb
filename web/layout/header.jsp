@@ -16,11 +16,11 @@
     <header>
         <nav>
             <ul>
-                <li><a href="<%= request.getContextPath() %>/dashboard.jsp">Accueil</a></li>
-                <li><a href="<%= request.getContextPath() %>/StationServlet">Stations</a></li>
-                <li><a href="<%= request.getContextPath() %>/ApprovisionnementServlet">Approvisionnements</a></li>
-                <li><a href="<%= request.getContextPath() %>/VenteServlet">Ventes</a></li>
-                <li><a href="<%= request.getContextPath() %>/logout">Déconnexion</a></li>
+                <li><a href="${pageContext.request.getContextPath()}/dashboard.jsp ">Accueil</a></li>
+                <li><a href="${pageContext.request.getContextPath()}/StationServlet">Stations</a></li>
+                <li><a href="${pageContext.request.getContextPath()}/ApprovisionnementServlet">Approvisionnements</a></li>
+                <li><a href="${pageContext.request.getContextPath()}/VenteServlet">Ventes</a></li>
+                <li><a href="${pageContext.request.getContextPath()}/logout">Déconnexion</a></li>
             </ul>
         </nav>
         <hr>       

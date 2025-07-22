@@ -7,7 +7,7 @@ import java.sql.Date;
 import java.util.*;
 import services.IdaO;
 import model.VenteModel;
-import dao.DBConnection;
+import dbUtils.DBConnection;
 
 
 /**

@@ -4,7 +4,7 @@
 <%@ include file="/layout/header.jsp" %>
 
 <h3>Liste des approvisionnements</h3>
-<a href="<%= request.getContextPath() %>/approvisionnement/enregistrement.jsp">+ Nouvelle livraison</a><br><br>
+<a href="${pageContext.request.getContextPath()}/approvisionnement/ajouter.jsp">+ Nouvelle livraison</a><br><br>
 
 <table border="1" cellpadding="8">
     <thead>

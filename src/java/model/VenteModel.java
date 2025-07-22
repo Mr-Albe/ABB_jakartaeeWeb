@@ -19,14 +19,13 @@ public class VenteModel {
     }
     
     // Constructeur 
-    public VenteModel(int id, int stationId, String typeCarburant, int quantite, double prixUnitaire, LocalDate dateVente, double revenu) {
+    public VenteModel(int id, int stationId, String typeCarburant, int quantite, double prixUnitaire, LocalDate dateVente) {
         this.id = id;
         this.stationId = stationId;
         this.typeCarburant = typeCarburant;
         this.quantite = quantite;
         this.prixUnitaire = prixUnitaire;
         this.dateVente = dateVente;
-        this.revenu = revenu;
     }
           
     // Getters et setters

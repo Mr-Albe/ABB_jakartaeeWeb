@@ -1,6 +1,6 @@
 package serviceImplement;
 
-import dao.DBConnection;
+import dbUtils.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

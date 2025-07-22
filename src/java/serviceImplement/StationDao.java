@@ -1,6 +1,6 @@
 package serviceImplement;
 
-import dao.DBConnection;
+import dbUtils.DBConnection;
 import java.util.List;
 import model.StationModel;
 import services.IdaO;
@@ -138,6 +138,27 @@ public class StationDao implements IdaO<StationModel> {
                         return rs.getInt("capacite_gazoline");
                     } else if ("diesel".equalsIgnoreCase(typeCarburant)) {
                         return rs.getInt("capacite_diesel");
+                    } else {
+                        throw new IllegalArgumentException("Type de carburant invalide : " + typeCarburant);
+                    }
+                } else {
+                    throw new SQLException("Station introuvable avec ID : " + stationId);
+                }
+            }
+        }
+    }
+    
+    public int getquantiteParStationIdType(int stationId, String typeCarburant) throws SQLException, ClassNotFoundException {
+        String sql = "SELECT quantite_gazoline, quantite_diesel FROM station WHERE id = ?";
+
+        try (Connection connect = DBConnection.getConnection(); PreparedStatement pdS = connect.prepareStatement(sql)) {
+            pdS.setInt(1, stationId);
+            try (ResultSet rs = pdS.executeQuery()) {
+                if (rs.next()) {
+                    if ("gazoline".equalsIgnoreCase(typeCarburant)) {
+                        return rs.getInt("quantite_gazoline");
+                    } else if ("diesel".equalsIgnoreCase(typeCarburant)) {
+                        return rs.getInt("diesel_diesel");
                     } else {
                         throw new IllegalArgumentException("Type de carburant invalide : " + typeCarburant);
                     }
