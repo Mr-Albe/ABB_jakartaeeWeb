@@ -27,13 +27,14 @@ public class VenteServlet extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         int id;
-        id = request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")): 0;
+        id = request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")) : 0;
         venteDao = new VenteDao();
 
         if (action != null && !action.isEmpty()) {
             if ("delete".equalsIgnoreCase(action)) {
                 try {
                     venteDao.supprimer(id);
+                    load(request, response);
                 } catch (ClassNotFoundException | SQLException ex) {
                     Logger.getLogger(VenteServlet.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -59,7 +60,7 @@ public class VenteServlet extends HttpServlet {
             request.setAttribute("vente", listVente);
             request.getRequestDispatcher("vente/index.jsp").forward(request, response);
         } catch (ClassNotFoundException | SQLException ex) {
-             request.setAttribute("erreur", "Erreur de connexion à la base de données : ");
+            request.setAttribute("erreur", "Erreur de connexion à la base de données : ");
             request.getRequestDispatcher("vente/index.jsp").forward(request, response);
         }
     }
@@ -75,6 +76,7 @@ public class VenteServlet extends HttpServlet {
 
             stationdao = new StationDao();
             int stockDisponible = stationdao.getquantiteParStationIdType(stationId, typeCarburant);
+
             if (stockDisponible >= quantiteDemandee) {
                 venteModel = new VenteModel();
                 venteModel.setStationId(stationId);
@@ -86,13 +88,24 @@ public class VenteServlet extends HttpServlet {
                 venteDao = new VenteDao();
                 venteDao.ajouter(venteModel);
 
-                // Mettre a jour le stock dans la station apres la vente 
-//                stationdao.retirerQuantite(stationId, typeCarburant, quantiteDemandee);
-                response.sendRedirect(request.getContextPath() + "/VenteServlet");
+                try {
+                    int retirerQuantite = stationdao.retirerQuantite(stationId, typeCarburant, quantiteDemandee);
+                    System.out.println("Carburant retiré avec succès !");
+
+                    // Redirection vers la page index seulement si tout est OK
+                    load(request,response);
+                    return;
+
+                } catch (IllegalStateException e) {
+                    request.setAttribute("erreur", "Erreur utilisateur : " + e.getMessage());
+                } catch (SQLException | ClassNotFoundException e) {
+                    request.setAttribute("erreur", "Erreur technique : " + e.getMessage());
+                }
             } else {
                 request.setAttribute("erreur", "La quantité disponible en " + typeCarburant + " est insuffisante pour effectuer cette vente.");
-                request.getRequestDispatcher("vente/ajouter.jsp").forward(request, response);
             }
+            request.getRequestDispatcher("vente/ajouter.jsp").forward(request, response);
+
         } catch (SQLException | ClassNotFoundException | NumberFormatException e) {
             request.setAttribute("erreur", "Erreur lors de l’enregistrement de la vente : " + e.getMessage());
             request.getRequestDispatcher("vente/ajouter.jsp").forward(request, response);

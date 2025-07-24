@@ -27,6 +27,7 @@ CREATE TABLE Vente (
     quantite INT,
     prix_vente DECIMAL(10,2),
     date_vente DATE,
+    revenu NUMBER,
     FOREIGN KEY (id_station) REFERENCES Station(id)
 );
 

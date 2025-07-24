@@ -16,7 +16,7 @@ public class VenteDao implements IdaO<VenteModel> {
 
     @Override
     public boolean ajouter(VenteModel vente) throws ClassNotFoundException, SQLException {
-        String sqlInsert = "INSERT INTO vente(id_station, type_carburant, quantite, prix_unitaire, date_vente, revenu) VALUES (?, ?, ?, ?, ?, ?)";
+        String sqlInsert = "INSERT INTO vente(id_station, type_carburant, quantite, prix_vente, date_vente, revenu) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
             PreparedStatement pdS = conn.prepareStatement(sqlInsert)) {
             pdS.setInt(1, vente.getStationId());
@@ -32,7 +32,7 @@ public class VenteDao implements IdaO<VenteModel> {
 
     @Override
     public boolean modifier(VenteModel vente) throws ClassNotFoundException, SQLException {
-        String sqlUpdate = "UPDATE vente SET id_station=?, type_carburant=?, quantite=?, prix_unitaire=?, date_vente=?, revenu=? WHERE id=?";
+        String sqlUpdate = "UPDATE vente SET id_station=?, type_carburant=?, quantite=?, prix_vente=?, date_vente=?, revenu=? WHERE id=?";
         try (Connection conn = DBConnection.getConnection();
             PreparedStatement pdS = conn.prepareStatement(sqlUpdate)) {
             pdS.setInt(1, vente.getStationId());
@@ -69,11 +69,11 @@ public class VenteDao implements IdaO<VenteModel> {
                 if (rs.next()) {
                     VenteModel vente = new VenteModel();
                     vente.setId(rs.getInt("id"));
-                    vente.setStationId(rs.getInt("stationId"));
-                    vente.setTypeCarburant(rs.getString("typeCarburant"));
+                    vente.setStationId(rs.getInt("id_station"));
+                    vente.setTypeCarburant(rs.getString("type_carburant"));
                     vente.setQuantite(rs.getInt("quantite"));
-                    vente.setPrixUnitaire(rs.getDouble("prixUnitaire"));
-                    vente.setDateVente(rs.getDate("dateVente").toLocalDate());
+                    vente.setPrixUnitaire(rs.getDouble("prix_vente"));
+                    vente.setDateVente(rs.getDate("date_vente").toLocalDate());
                     return vente;
                 }
                 return null;
@@ -91,12 +91,11 @@ public class VenteDao implements IdaO<VenteModel> {
             while (rs.next()) {
                 VenteModel vente = new VenteModel();
                 vente.setId(rs.getInt("id"));
-                vente.setStationId(rs.getInt("stationId"));
-                vente.setTypeCarburant(rs.getString("typeCarburant"));
+                vente.setStationId(rs.getInt("id_station"));
+                vente.setTypeCarburant(rs.getString("type_carburant"));
                 vente.setQuantite(rs.getInt("quantite"));
-                vente.setPrixUnitaire(rs.getDouble("prixUnitaire"));
-                vente.setDateVente(rs.getDate("dateVente").toLocalDate());
-                vente.setPrixUnitaire(rs.getDouble("prixUnitaire"));
+                vente.setPrixUnitaire(rs.getDouble("prix_vente"));
+                vente.setDateVente(rs.getDate("date_vente").toLocalDate());
                 liste.add(vente);
             }
         }

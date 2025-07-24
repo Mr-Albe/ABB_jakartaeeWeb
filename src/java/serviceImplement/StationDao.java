@@ -158,7 +158,7 @@ public class StationDao implements IdaO<StationModel> {
                     if ("gazoline".equalsIgnoreCase(typeCarburant)) {
                         return rs.getInt("quantite_gazoline");
                     } else if ("diesel".equalsIgnoreCase(typeCarburant)) {
-                        return rs.getInt("diesel_diesel");
+                        return rs.getInt("quantite_diesel");
                     } else {
                         throw new IllegalArgumentException("Type de carburant invalide : " + typeCarburant);
                     }
@@ -168,5 +168,35 @@ public class StationDao implements IdaO<StationModel> {
             }
         }
     }
+    
+    public int retirerQuantite(int id, String type, int quantite) throws SQLException, ClassNotFoundException {
+    String sqlUpdate = null;
+    if (type.equalsIgnoreCase("gazoline")) {
+        sqlUpdate = "UPDATE STATION SET quantite_gazoline = quantite_gazoline - ? WHERE id = ? AND quantite_gazoline >= ?";
+    } else if (type.equalsIgnoreCase("diesel")) {
+        sqlUpdate = "UPDATE STATION SET quantite_diesel = quantite_diesel - ? WHERE id = ? AND quantite_diesel >= ?";
+    } else {
+        throw new IllegalArgumentException("Type de carburant invalide : " + type);
+    }
+
+    try (Connection connect = DBConnection.getConnection();
+         PreparedStatement pdS = connect.prepareStatement(sqlUpdate)) {
+
+        pdS.setInt(1, quantite); 
+        pdS.setInt(2, id);      
+        pdS.setInt(3, quantite);
+
+        int rowsAffected = pdS.executeUpdate();
+
+        if (rowsAffected == 0) {
+            // Aucun carburant retire => station non trouvee ou quantite insuffisante
+            throw new IllegalStateException("Impossible de retirer " + quantite + " gallons de " + type +
+                    " (station introuvable ou quantité insuffisante).");
+        }
+
+        return rowsAffected;
+    }
+}
+
 
 }

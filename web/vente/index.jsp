@@ -26,7 +26,7 @@
             <th>Quantité Gallons</th>
             <th>Prix unitaire</th>
             <th>Date de vente</th>
-            <th>Revenue</th>
+            <th>Revenue en Gourdes</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -45,7 +45,7 @@
             <td><%= vente.getQuantite()%></td>
             <td><%= vente.getPrixUnitaire()%></td>            
             <td><%= vente.getDateVente()%></td>
-            <td><%= vente.getRevenu()%></td>
+            <td><%= vente.getRevenu() + " HTG"%></td>
             <td>
                 <a href="VenteServlet?action=edit&id=<%= vente.getId()%>">Modifier</a> |
                 <a href="VenteServlet?action=delete&id=<%= vente.getId()%>">Supprimer</a>  
