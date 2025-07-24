@@ -106,7 +106,7 @@ public class StationServlet extends HttpServlet {
 
         } catch (ClassNotFoundException | SQLException e) {
             // En cas d'erreur, transmettre un message d'erreur a la JSP
-            request.setAttribute("erreur", "Erreur lors du chargement des stations : ");
+            request.setAttribute("erreur", "Erreur de connexion à la base de données : ");
             request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
         }
     }

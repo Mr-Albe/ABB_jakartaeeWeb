@@ -8,6 +8,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import model.VenteModel;
 import serviceImplement.StationDao;
@@ -22,7 +25,25 @@ public class VenteServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.sendRedirect("vente/ajouter.jsp");
+        String action = request.getParameter("action");
+        int id;
+        id = request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")): 0;
+        venteDao = new VenteDao();
+
+        if (action != null && !action.isEmpty()) {
+            if ("delete".equalsIgnoreCase(action)) {
+                try {
+                    venteDao.supprimer(id);
+                } catch (ClassNotFoundException | SQLException ex) {
+                    Logger.getLogger(VenteServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else if ("edit".equalsIgnoreCase(action)) {
+                response.sendRedirect("vente/ajouter.jsp");
+            }
+        } else {
+            load(request, response);
+        }
+
     }
 
     @Override
@@ -31,9 +52,20 @@ public class VenteServlet extends HttpServlet {
         enregistrer(request, response);
     }
 
+    protected void load(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        venteDao = new VenteDao();
+        try {
+            List<VenteModel> listVente = (List<VenteModel>) venteDao.afficherTout();
+            request.setAttribute("vente", listVente);
+            request.getRequestDispatcher("vente/index.jsp").forward(request, response);
+        } catch (ClassNotFoundException | SQLException ex) {
+             request.setAttribute("erreur", "Erreur de connexion à la base de données : ");
+            request.getRequestDispatcher("vente/index.jsp").forward(request, response);
+        }
+    }
+
     protected void enregistrer(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         try {
             int stationId = Integer.parseInt(request.getParameter("idStation"));
             String typeCarburant = request.getParameter("typeCarburant");
@@ -43,7 +75,6 @@ public class VenteServlet extends HttpServlet {
 
             stationdao = new StationDao();
             int stockDisponible = stationdao.getquantiteParStationIdType(stationId, typeCarburant);
-
             if (stockDisponible >= quantiteDemandee) {
                 venteModel = new VenteModel();
                 venteModel.setStationId(stationId);
@@ -57,13 +88,11 @@ public class VenteServlet extends HttpServlet {
 
                 // Mettre a jour le stock dans la station apres la vente 
 //                stationdao.retirerQuantite(stationId, typeCarburant, quantiteDemandee);
-
                 response.sendRedirect(request.getContextPath() + "/VenteServlet");
             } else {
                 request.setAttribute("erreur", "La quantité disponible en " + typeCarburant + " est insuffisante pour effectuer cette vente.");
                 request.getRequestDispatcher("vente/ajouter.jsp").forward(request, response);
             }
-
         } catch (SQLException | ClassNotFoundException | NumberFormatException e) {
             request.setAttribute("erreur", "Erreur lors de l’enregistrement de la vente : " + e.getMessage());
             request.getRequestDispatcher("vente/ajouter.jsp").forward(request, response);
