@@ -93,16 +93,12 @@ public class StationServlet extends HttpServlet {
         try {
             // Initialisation du DAO
             sdDao = new StationDao();
-
             // Recuperation de toutes les stations depuis la base de donnees
             List<StationModel> listStation = sdDao.afficherTout();
-
             // Ajout de la liste dans les attributs de la requete
             request.setAttribute("listStation", listStation);
-
             // Redirection vers la page index.jsp
             request.getRequestDispatcher("/stations/index.jsp").forward(request, response);            request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
-
 
         } catch (ClassNotFoundException | SQLException e) {
             // En cas d'erreur, transmettre un message d'erreur a la JSP
