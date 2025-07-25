@@ -98,11 +98,12 @@ public class StationServlet extends HttpServlet {
             // Ajout de la liste dans les attributs de la requete
             request.setAttribute("listStation", listStation);
             // Redirection vers la page index.jsp
-            request.getRequestDispatcher("/stations/index.jsp").forward(request, response);            request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
+            request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
+            
 
         } catch (ClassNotFoundException | SQLException e) {
             // En cas d'erreur, transmettre un message d'erreur a la JSP
-            request.setAttribute("erreur", "Erreur de connexion à la base de données : ");
+            request.setAttribute("erreur", "Erreur de connexion à la base de données : "+e);
             request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
         }
     }
