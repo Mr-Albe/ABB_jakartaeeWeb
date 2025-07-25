@@ -17,7 +17,7 @@ public class StationServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(StationServlet.class.getName());
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
 
@@ -26,7 +26,8 @@ public class StationServlet extends HttpServlet {
                 supprimerStation(request, response);
             } else if ("edit".equals(action)) {
                 afficherFormulaireEdition(request, response);
-            } else {
+            } 
+            else {
                 load(request, response);
             }
         } catch (Exception e) {
@@ -37,16 +38,21 @@ public class StationServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             String action = request.getParameter("action");
-            
+
             if ("add".equals(action)) {
                 enregistrerNouvelleStation(request, response);
             } else if ("edit".equals(action)) {
                 modifierStationExistante(request, response);
-            } else {
+            } else if ("logout".equals(action)) {
+                request.getSession().invalidate();
+                response.sendRedirect(request.getContextPath() + "/login.jsp");
+                return;
+            }
+            else {
                 load(request, response);
             }
         } catch (Exception e) {
@@ -56,7 +62,7 @@ public class StationServlet extends HttpServlet {
         }
     }
 
-    private void load(HttpServletRequest request, HttpServletResponse response) 
+    private void load(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         StationDao sdDao = null;
         try {
@@ -71,35 +77,32 @@ public class StationServlet extends HttpServlet {
         }
     }
 
-    private void enregistrerNouvelleStation(HttpServletRequest request, HttpServletResponse response) 
+    private void enregistrerNouvelleStation(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         StationDao sdDao = null;
         try {
-            // Validation des données
             String numero = request.getParameter("numero");
             String rue = request.getParameter("rue");
             String commune = request.getParameter("commune");
-            
-            if (numero == null || rue == null || commune == null || 
-                numero.isEmpty() || rue.isEmpty() || commune.isEmpty()) {
+
+            if (numero == null || rue == null || commune == null
+                    || numero.isEmpty() || rue.isEmpty() || commune.isEmpty()) {
                 throw new IllegalArgumentException("Tous les champs textuels sont obligatoires");
             }
-            
+
             int capaciteGazoline = Integer.parseInt(request.getParameter("capaciteGazoline"));
             int quantiteGazoline = Integer.parseInt(request.getParameter("quantiteGazoline"));
             int capaciteDiesel = Integer.parseInt(request.getParameter("capaciteDiesel"));
             int quantiteDiesel = Integer.parseInt(request.getParameter("quantiteDiesel"));
 
-            // Validation des quantités
             if (quantiteGazoline > capaciteGazoline) {
                 throw new IllegalArgumentException("La quantité Gazoline ne peut pas dépasser la capacité");
             }
-            
+
             if (quantiteDiesel > capaciteDiesel) {
                 throw new IllegalArgumentException("La quantité Diesel ne peut pas dépasser la capacité");
             }
 
-            // Création du modèle
             StationModel stModel = new StationModel();
             stModel.setNumero(numero);
             stModel.setRue(rue);
@@ -109,7 +112,6 @@ public class StationServlet extends HttpServlet {
             stModel.setCapaciteDiesel(capaciteDiesel);
             stModel.setQuantiteDiesel(quantiteDiesel);
 
-            // Enregistrement
             sdDao = new StationDao();
             boolean resultat = sdDao.ajouter(stModel);
 
@@ -118,6 +120,7 @@ public class StationServlet extends HttpServlet {
             }
 
             response.sendRedirect(request.getContextPath() + "/StationServlet");
+            return;
 
         } catch (NumberFormatException e) {
             request.setAttribute("erreur", "Veuillez entrer des nombres valides pour les capacités et quantités");
@@ -145,37 +148,34 @@ public class StationServlet extends HttpServlet {
         request.setAttribute("quantiteDiesel", request.getParameter("quantiteDiesel"));
     }
 
-    private void modifierStationExistante(HttpServletRequest request, HttpServletResponse response) 
+    private void modifierStationExistante(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         StationDao sdDao = null;
         try {
             int id = Integer.parseInt(request.getParameter("id"));
-            
-            // Validation des données
+
             String numero = request.getParameter("numero");
             String rue = request.getParameter("rue");
             String commune = request.getParameter("commune");
-            
-            if (numero == null || rue == null || commune == null || 
-                numero.isEmpty() || rue.isEmpty() || commune.isEmpty()) {
+
+            if (numero == null || rue == null || commune == null
+                    || numero.isEmpty() || rue.isEmpty() || commune.isEmpty()) {
                 throw new IllegalArgumentException("Tous les champs textuels sont obligatoires");
             }
-            
+
             int capaciteGazoline = Integer.parseInt(request.getParameter("capaciteGazoline"));
             int quantiteGazoline = Integer.parseInt(request.getParameter("quantiteGazoline"));
             int capaciteDiesel = Integer.parseInt(request.getParameter("capaciteDiesel"));
             int quantiteDiesel = Integer.parseInt(request.getParameter("quantiteDiesel"));
 
-            // Validation des quantités
             if (quantiteGazoline > capaciteGazoline) {
                 throw new IllegalArgumentException("La quantité Gazoline ne peut pas dépasser la capacité");
             }
-            
+
             if (quantiteDiesel > capaciteDiesel) {
                 throw new IllegalArgumentException("La quantité Diesel ne peut pas dépasser la capacité");
             }
 
-            // Création du modèle
             StationModel stModel = new StationModel();
             stModel.setId(id);
             stModel.setNumero(numero);
@@ -186,15 +186,18 @@ public class StationServlet extends HttpServlet {
             stModel.setCapaciteDiesel(capaciteDiesel);
             stModel.setQuantiteDiesel(quantiteDiesel);
 
-            // Mise à jour
             sdDao = new StationDao();
             boolean resultat = sdDao.modifier(stModel);
 
             if (!resultat) {
-                throw new SQLException("Échec de la mise à jour dans la base de données");
+                request.setAttribute("erreur", "Échec de la mise à jour dans la base de données");
+                request.setAttribute("station", stModel);
+                request.getRequestDispatcher("/stations/modifier.jsp").forward(request, response);
+                return;
             }
 
             response.sendRedirect(request.getContextPath() + "/StationServlet");
+            return;
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Erreur lors de la modification", e);
@@ -203,7 +206,7 @@ public class StationServlet extends HttpServlet {
         }
     }
 
-    private void afficherFormulaireEdition(HttpServletRequest request, HttpServletResponse response) 
+    private void afficherFormulaireEdition(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         StationDao sdDao = null;
         try {
@@ -225,14 +228,14 @@ public class StationServlet extends HttpServlet {
         }
     }
 
-    private void supprimerStation(HttpServletRequest request, HttpServletResponse response) 
+    private void supprimerStation(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         StationDao sdDao = null;
         try {
             int id = Integer.parseInt(request.getParameter("id"));
             sdDao = new StationDao();
             boolean resultat = sdDao.supprimer(id);
-            
+
             if (!resultat) {
                 request.setAttribute("erreur", "Échec de la suppression de la station");
                 load(request, response);
