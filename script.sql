@@ -33,11 +33,11 @@ CREATE TABLE Vente (
     FOREIGN KEY (id_station) REFERENCES Station(id)
 );
 
-CREATE TABLE Utilisateur (
+CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nom_util VARCHAR(50) UNIQUE,
-    mot_de_passe VARCHAR(100),
-    role VARCHAR(20)
+    username VARCHAR(50) UNIQUE,
+    password VARCHAR(70),
+    role ENUM('admin', 'user') NOT NULL DEFAULT 'user'
 );
 
 -- Insertion dans Station
@@ -54,17 +54,10 @@ INSERT INTO Station (numero, rue, commune, capacite_gazoline, capacite_diesel, q
 ('ST010', 'Route Nationale #1', 'Gonaïves', 9500, 7000, 4500, 3000);
 
 -- Insertion dans Utilisateur
-INSERT INTO Utilisateur (nom_util, mot_de_passe, role) VALUES
-('admin1', 'pass123', 'admin'),
-('user1', 'pass123', 'vendeur'),
-('user2', 'pass123', 'vendeur'),
-('manager1', 'pass123', 'manager'),
-('admin2', 'pass456', 'admin'),
-('user3', 'pass456', 'vendeur'),
-('user4', 'pass789', 'vendeur'),
-('manager2', 'pass789', 'manager'),
-('tech1', 'pass321', 'technicien'),
-('tech2', 'pass654', 'technicien');
+INSERT INTO users (username, password, role) VALUES
+('Bendy', 'password', 'admin'),
+('Albe', 'password', 'admin'),
+('Blemy', 'password', 'admin');
 
 -- Insertion dans approvisionnement
 INSERT INTO approvisionnement (id_station, type_carburant, quantite, date_livraison, fournisseur) VALUES
