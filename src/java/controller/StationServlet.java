@@ -58,9 +58,7 @@ public class StationServlet extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
 
-        if ("calculerPourcentage".equals(action)) {
-            calculerPourcentage(request, response);
-        } else if ("delete".equals(action)) {
+        if ("delete".equals(action)) {
             try {
                 supprimerStation(request, response); // fait un redirect interne
             } catch (SQLException | ClassNotFoundException ex) {
@@ -86,7 +84,6 @@ public class StationServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    
     // redirection vers la page station/index.jsp
     protected void load(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -98,7 +95,7 @@ public class StationServlet extends HttpServlet {
             // Ajout de la liste dans les attributs de la requete
             request.setAttribute("listStation", listStation);
             // Redirection vers la page index.jsp
-            request.getRequestDispatcher("/stations/index.jsp").forward(request, response);            request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
+            request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
 
         } catch (ClassNotFoundException | SQLException e) {
             // En cas d'erreur, transmettre un message d'erreur a la JSP
@@ -106,8 +103,7 @@ public class StationServlet extends HttpServlet {
             request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
         }
     }
-    
-    
+
     // Méthode pour enregistrer une station à partir des données du formulaire
     protected void enregistrer(HttpServletRequest request, HttpServletResponse response) {
         try {
@@ -272,9 +268,9 @@ public class StationServlet extends HttpServlet {
             if (id > 0) {
                 stModel.setId(id);
                 sdDao = new StationDao();
-                sdDao.modifier(stModel); 
+                sdDao.modifier(stModel);
             } else {
-                enregistrer(request,response); 
+                enregistrer(request, response);
             }
 
             response.sendRedirect(request.getContextPath() + "/StationServlet");

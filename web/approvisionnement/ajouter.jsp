@@ -67,9 +67,7 @@
 
     <div class="form-group"> 
         <label>Fournisseur :</label>
-        <select name="idFournisseur" >
-            <option value="5"></option>
-        </select>
+        <input type="text" name="fournisseur" required>
     </div>
 
     <div class="form-group"> 

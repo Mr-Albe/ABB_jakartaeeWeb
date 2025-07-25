@@ -31,7 +31,7 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
             psdInsert.setString(2, app.getTypeCarburant());
             psdInsert.setInt(3, (int) app.getQuantite());
             psdInsert.setDate(4, Date.valueOf(app.getDateLivraison()));
-            psdInsert.setInt(5, app.getFournisseur());
+            psdInsert.setString(5, app.getFournisseur());
             psdInsert.executeUpdate();
 
             psdUdate.setInt(1, (int) app.getQuantite());
@@ -102,7 +102,7 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
                 ps.setString(2, app.getTypeCarburant());
                 ps.setInt(3, app.getQuantite());
                 ps.setDate(4, Date.valueOf(app.getDateLivraison()));
-                ps.setInt(5, app.getFournisseur());
+                ps.setString(5, app.getFournisseur());
                 ps.setInt(6, app.getId());
                 ps.executeUpdate();
             }
@@ -159,7 +159,7 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
                     appModel.setQuantite(rss.getInt("quantite"));
                     Date appDate = rss.getDate("date_livraison");
                     appModel.setDateLivraison(appDate.toLocalDate());
-                    appModel.setFournisseur(rss.getInt("id_fournisseur"));
+                    appModel.setFournisseur(rss.getString("fournisseur"));
 
                 }
 
@@ -195,7 +195,7 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
                 appModel.setQuantite(rs.getInt("quantite"));
                 Date sqlDate = rs.getDate("date_livraison");
                 appModel.setDateLivraison(sqlDate.toLocalDate());
-                appModel.setFournisseur(rs.getInt("id_fournisseur"));
+                appModel.setFournisseur(rs.getString("fournisseur"));
 
                 appList.add(appModel);
             }

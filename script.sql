@@ -16,7 +16,7 @@ CREATE TABLE approvisionnement (
     type_carburant ENUM('gazoline', 'diesel'),
     quantite INT,
     date_livraison DATE,
-    id_fournisseur VARCHAR(100),
+    fournisseur VARCHAR(100),
     FOREIGN KEY (id_station) REFERENCES station(id)
 );
 
@@ -27,7 +27,7 @@ CREATE TABLE Vente (
     quantite INT,
     prix_vente DECIMAL(10,2),
     date_vente DATE,
-    revenu NUMBER,
+    revenu DECIMAL(10,2), # modifie
     FOREIGN KEY (id_station) REFERENCES Station(id)
 );
 

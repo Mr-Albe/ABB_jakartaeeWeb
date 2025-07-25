@@ -75,7 +75,7 @@ public class VenteServlet extends HttpServlet {
         try {
             int idVente = Integer.parseInt(request.getParameter("id"));
             int stationId = Integer.parseInt(request.getParameter("idStation"));
-            String typeCarburant = request.getParameter("typeCarburant");
+            String nouveauTypeCarburant = request.getParameter("typeCarburant");
             int nouvelleQuantite = Integer.parseInt(request.getParameter("quantite"));
             double prixUnitaire = Double.parseDouble(request.getParameter("prixUnitaire"));
             LocalDate dateVente = LocalDate.parse(request.getParameter("dateVente"));
@@ -86,27 +86,42 @@ public class VenteServlet extends HttpServlet {
             // Récupérer la vente originale
             VenteModel venteOriginale = venteDao.rechercherParId(idVente);
             int ancienneQuantite = venteOriginale.getQuantite();
+            String ancienTypeCarburant = venteOriginale.getTypeCarburant();
 
-            int difference = nouvelleQuantite - ancienneQuantite;
+            // Si le type de carburant a changé
+            if (!ancienTypeCarburant.equals(nouveauTypeCarburant)) {
+                // Retourner l'ancienne quantité à l'ancien type
+                stationdao.ajouterQuantite(stationId, ancienTypeCarburant, ancienneQuantite);
 
-            // Si la différence est négative : on retourne du stock
-            if (difference < 0) {
-                int retour = Math.abs(difference);
-                stationdao.ajouterQuantite(stationId, typeCarburant, retour);
-            } // Si la différence est positive : on retire du stock (si disponible)
-            else if (difference > 0) {
-                int stockDisponible = stationdao.getquantiteParStationIdType(stationId, typeCarburant);
-                if (stockDisponible < difference) {
-                    request.setAttribute("erreur", "Quantité insuffisante dans la station pour effectuer cette modification.");
+                // Vérifier que le nouveau type a assez de stock
+                int stockDisponible = stationdao.getquantiteParStationIdType(stationId, nouveauTypeCarburant);
+                if (stockDisponible < nouvelleQuantite) {
+                    request.setAttribute("erreur", "Quantité insuffisante dans la station pour le nouveau type de carburant.");
                     request.getRequestDispatcher("vente/modifier.jsp").forward(request, response);
                     return;
                 }
-                stationdao.retirerQuantite(stationId, typeCarburant, difference);
+                // Retirer la nouvelle quantite du nouveau type
+                stationdao.retirerQuantite(stationId, nouveauTypeCarburant, nouvelleQuantite);
+            } else {
+                // Meme type de carburant, on calcule la différence
+                int difference = nouvelleQuantite - ancienneQuantite;
+                if (difference < 0) {
+                    // Retourner l'excédent
+                    stationdao.ajouterQuantite(stationId, nouveauTypeCarburant, Math.abs(difference));
+                } else if (difference > 0) {
+                    int stockDisponible = stationdao.getquantiteParStationIdType(stationId, nouveauTypeCarburant);
+                    if (stockDisponible < difference) {
+                        request.setAttribute("erreur", "Quantité insuffisante dans la station.");
+                        request.getRequestDispatcher("vente/modifier.jsp").forward(request, response);
+                        return;
+                    }
+                    stationdao.retirerQuantite(stationId, nouveauTypeCarburant, difference);
+                }
             }
 
-            // Mettre à jour les infos de la vente
+            // Mettre à jour la vente
             venteOriginale.setStationId(stationId);
-            venteOriginale.setTypeCarburant(typeCarburant);
+            venteOriginale.setTypeCarburant(nouveauTypeCarburant);
             venteOriginale.setQuantite(nouvelleQuantite);
             venteOriginale.setPrixUnitaire(prixUnitaire);
             venteOriginale.setDateVente(dateVente);

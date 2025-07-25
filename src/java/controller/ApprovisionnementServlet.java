@@ -127,7 +127,7 @@ public class ApprovisionnementServlet extends HttpServlet {
                 approvisionnement.setTypeCarburant(request.getParameter("type"));
                 approvisionnement.setQuantite(Integer.parseInt(request.getParameter("quantite")));
                 approvisionnement.setDateLivraison(LocalDate.parse(request.getParameter("dateLivraison")));
-                approvisionnement.setFournisseur(Integer.parseInt(request.getParameter("idFournisseur")));
+                approvisionnement.setFournisseur(request.getParameter("fournisseur"));
                 // Vérification de la capacité
                 int stationId = approvisionnement.getStationId();
                 int quantite = approvisionnement.getQuantite();
@@ -146,10 +146,8 @@ public class ApprovisionnementServlet extends HttpServlet {
                 approDao = new ApprovisionnementDao();
                 approDao.modifier(approvisionnement);
                 response.sendRedirect(request.getContextPath() + "/ApprovisionnementServlet");
-                return;
             } else {
                 enregistrer(request, response);
-                return;
             }
 
         } catch (IOException | ClassNotFoundException | NumberFormatException | SQLException e) {
@@ -164,7 +162,7 @@ public class ApprovisionnementServlet extends HttpServlet {
         String typeCarburant = request.getParameter("type");
         String quantiteStr = request.getParameter("quantite");
         String dateStr = request.getParameter("dateLivraison");
-        String fournisseur = request.getParameter("idFournisseur");
+        String fournisseur = request.getParameter("fournisseur");
         String stationIdStr = request.getParameter("stationId");
 
         //Validation simple des paramètres
@@ -180,7 +178,6 @@ public class ApprovisionnementServlet extends HttpServlet {
             int stationId = Integer.parseInt(stationIdStr);
             LocalDate dateLivraison;
             dateLivraison = LocalDate.parse(dateStr);
-            int idFournisseur = Integer.parseInt(fournisseur);
 
             // Récupérer la station
             stationDao = new StationDao();
@@ -219,7 +216,7 @@ public class ApprovisionnementServlet extends HttpServlet {
             approvisionnement.setTypeCarburant(typeCarburant);
             approvisionnement.setQuantite(quantite);
             approvisionnement.setDateLivraison(dateLivraison);
-            approvisionnement.setFournisseur(idFournisseur);
+            approvisionnement.setFournisseur(fournisseur);
 
             approDao = new ApprovisionnementDao();
             boolean ajoutOk = approDao.ajouter(approvisionnement);

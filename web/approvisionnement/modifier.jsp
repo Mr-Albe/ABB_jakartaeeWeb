@@ -72,7 +72,7 @@
 
     <div class="form-group"> 
         <label>Fournisseur :</label>
-        <select name="idFournisseur" >
+        <select name="fournisseur" >
             <option value="5"></option>
         </select>
     </div>
