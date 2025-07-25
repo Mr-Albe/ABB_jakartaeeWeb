@@ -1,12 +1,12 @@
 <hr class="border-t border-gray-300 my-8">
 
-<footer class="bg-blue-900 text-white py-10">
+<footer class="bg-blue-900 text-white py-4">
     <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-6">
 
         <!-- Projet -->
         <div>
             <h2 class="text-xl font-bold mb-4">À propos</h2>
-            <p class="text-sm">
+            <p class="text-sm space-y-2">
                 Ce projet JakartaEE a été réalisé dans le cadre du cours de développement web pour la 4e INFO à CHC-UEHL.
             </p>
         </div>
