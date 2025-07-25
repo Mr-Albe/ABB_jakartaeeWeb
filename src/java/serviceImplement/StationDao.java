@@ -214,4 +214,49 @@ public class StationDao implements IdaO<StationModel> {
         }
     }
 
+    public boolean modifierQuantiteAvecChangementType(int stationId,
+        String ancienType,
+        String nouveauType,
+        int quantite) throws SQLException, ClassNotFoundException {
+        String sql1 = null;
+        String sql2 = null;
+
+        if (ancienType.equalsIgnoreCase("gazoline") && nouveauType.equalsIgnoreCase("diesel")) {
+            sql1 = "UPDATE Station SET quantite_gazoline = quantite_gazoline + ? WHERE id = ?";
+            sql2 = "UPDATE Station SET quantite_diesel = quantite_diesel - ? WHERE id = ?";
+        } else if (ancienType.equalsIgnoreCase("diesel") && nouveauType.equalsIgnoreCase("gazoline")) {
+            sql1 = "UPDATE Station SET quantite_diesel = quantite_diesel + ? WHERE id = ?";
+            sql2 = "UPDATE Station SET quantite_gazoline = quantite_gazoline - ? WHERE id = ?";
+        } else {
+            // Si le type de carburant n’a pas changé
+            sql1 = "UPDATE Station SET quantite_" + ancienType.toLowerCase() + " = quantite_" + ancienType.toLowerCase() + " + ? WHERE id = ?";
+            sql2 = null;
+        }
+
+        try (Connection conn = DBConnection.getConnection()) {
+            conn.setAutoCommit(false); // Pour garantir la transaction complète
+
+            try (PreparedStatement stmt1 = conn.prepareStatement(sql1)) {
+                stmt1.setInt(1, quantite);
+                stmt1.setInt(2, stationId);
+                stmt1.executeUpdate();
+            }
+
+            if (sql2 != null) {
+                try (PreparedStatement stmt2 = conn.prepareStatement(sql2)) {
+                    stmt2.setInt(1, quantite);
+                    stmt2.setInt(2, stationId);
+                    stmt2.executeUpdate();
+                }
+            }
+
+            conn.commit();
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
