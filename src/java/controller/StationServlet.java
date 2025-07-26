@@ -71,8 +71,6 @@ public class StationServlet extends HttpServlet {
             List<StationModel> listStation = sdDao.afficherTout();
             request.setAttribute("listStation", listStation);
             request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
-        } catch (SQLIntegrityConstraintViolationException e) {
-            request.setAttribute("erreur", "Ouf! Impossible de supprimer cette station");
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Désolé! une Erreur lors du chargement des stations", e);
             request.setAttribute("erreur", "Désolé! une erreur de connexion à la base de données");

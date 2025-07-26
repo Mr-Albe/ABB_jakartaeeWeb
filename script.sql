@@ -11,7 +11,6 @@ CREATE TABLE Station (
     quantite_gazoline INT,
     quantite_diesel INT
 );
-Alter Station add constraint index_numero UNIQUE(numero);
 
 CREATE TABLE approvisionnement (
     id INT AUTO_INCREMENT PRIMARY KEY,
