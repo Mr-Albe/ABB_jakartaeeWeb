@@ -1,4 +1,3 @@
-
 package serviceImplement;
 
 import java.sql.*;
@@ -8,10 +7,6 @@ import services.IdaO;
 import model.VenteModel;
 import dbUtils.DBConnection;
 
-
-/**
- * Gère les opérations CRUD sur les ventes.
- */
 public class VenteDao implements IdaO<VenteModel> {
 
     @Override

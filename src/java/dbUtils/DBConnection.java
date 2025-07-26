@@ -13,7 +13,7 @@ public class DBConnection {
         // Paramètres de connexion
         String url = "jdbc:mysql://localhost:3310/stationDB";
         String user = "root";
-        String password = "Servilus_2509@";
+        String password = "";
 
         // Établir la connexion
         return DriverManager.getConnection(url, user, password);

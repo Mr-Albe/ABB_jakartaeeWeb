@@ -3,7 +3,7 @@ USE stationdb;
 
 CREATE TABLE Station (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    numero VARCHAR(10),
+    numero VARCHAR(10) UNIQUE,
     rue VARCHAR(100),
     commune VARCHAR(100),
     capacite_gazoline INT,
@@ -11,6 +11,7 @@ CREATE TABLE Station (
     quantite_gazoline INT,
     quantite_diesel INT
 );
+Alter Station add constraint index_numero UNIQUE(numero);
 
 CREATE TABLE approvisionnement (
     id INT AUTO_INCREMENT PRIMARY KEY,
