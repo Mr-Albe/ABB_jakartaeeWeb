@@ -4,6 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -129,6 +130,7 @@ public class StationServlet extends HttpServlet {
     private void enregistrerNouvelleStation(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         StationDao sdDao = null;
+        HttpSession session = request.getSession();
         try {
             // on recupere un objet de StationModel de la methode lireEtvaliderStation(param)
             StationModel stationForm = lireEtvaliderStation(request);
@@ -149,20 +151,20 @@ public class StationServlet extends HttpServlet {
                 throw new SQLException("Échec de l'enregistrement dans la base de données");
             }
 
+            session.setAttribute("success", "Enregistrement fait avec succès.");
             response.sendRedirect(request.getContextPath() + "/StationServlet");
-            return;
 
         } catch (NumberFormatException e) {
-            request.setAttribute("erreur", "Veuillez entrer des nombres valides pour les capacités et quantités");
+            session.setAttribute("erreur", "Veuillez entrer des nombres valides pour les capacités et quantités");
             conserverValeursFormulaire(request);
             request.getRequestDispatcher("/stations/ajouter.jsp").forward(request, response);
         } catch (IllegalArgumentException e) {
-            request.setAttribute("erreur", e.getMessage());
+            session.setAttribute("erreur", e.getMessage());
             conserverValeursFormulaire(request);
             request.getRequestDispatcher("/stations/ajouter.jsp").forward(request, response);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Erreur lors de l'enregistrement", e);
-            request.setAttribute("erreur", "Erreur technique: " + e.getMessage());
+            session.setAttribute("erreur", "Erreur technique: " + e.getMessage());
             conserverValeursFormulaire(request);
             request.getRequestDispatcher("/stations/ajouter.jsp").forward(request, response);
         }

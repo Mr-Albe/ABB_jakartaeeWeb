@@ -31,7 +31,6 @@
                     <div class="dropdown-container">
                         <a href="${pageContext.request.contextPath}/StationServlet" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Liste des stations</a>
                         <a href="${pageContext.request.contextPath}/stations/ajouter.jsp" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Ajouter une station</a>
-                        <a href="#" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Statistiques</a>
                     </div>
                 </div>
 
@@ -87,11 +86,9 @@
         <div class="flex items-center">
             <div class="nav-text">
                 <p class="font-medium">
-                   <%=
-                       user.getUsername()
-                   %>
+                    <%=user.getUsername()%>
                 </p>
-                <p class="text-blue-200 text-sm"><%= user.getRole() %></p>
+                <p class="text-blue-200 text-sm"><%= user.getRole()%></p>
             </div>
             <a href="/Logout" class="ml-auto text-blue-200 hover:text-white">
                 <i class="fas fa-sign-out-alt"></i>

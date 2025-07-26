@@ -6,9 +6,8 @@
 <%@ include file="/layout/header.jsp" %>
 <%@include file="/layout/sidebar.jsp" %>
 
-<%
-    List<StationModel> listStation = (List<StationModel>) session.getAttribute("listStation");
-    
+<%    List<StationModel> listStation = (List<StationModel>) session.getAttribute("listStation");
+
     String erreur = (String) session.getAttribute("erreur");
     int stationCount = listStation != null ? listStation.size() : 0;
 
@@ -63,6 +62,24 @@
         }
     %>
 
+    <%
+        String success = (String) session.getAttribute("success");
+        if (success != null && !success.isEmpty()) {
+    %>
+    <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6 rounded-md shadow-sm">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <i class="fas fa-check-circle text-green-500 text-xl"></i>
+            </div>
+            <div class="ml-3">
+                <p class="text-sm font-medium text-green-800"><%= success%></p>
+            </div>
+        </div>
+    </div>
+    <%
+            session.removeAttribute("success"); // Très important !
+        }
+    %>
 
     <!-- Stats cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
