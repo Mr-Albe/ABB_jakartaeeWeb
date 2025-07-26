@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public class VenteModel {
     private int id;
     private int stationId;
-    private String typeCarburant; // "gazoline" ou "diesel"
+    private String typeCarburant; 
     private int quantite;
     private double prixUnitaire;
     private LocalDate dateVente;
@@ -59,7 +59,8 @@ public class VenteModel {
 
     public void setQuantite(int quantite) {
         this.quantite = quantite;
-        calculerRevenu(); // calcul automatique lors du set
+        // calcul automatique lors du  revenu
+        calculerRevenu(); 
     }
 
     public double getPrixUnitaire() {
