@@ -218,12 +218,12 @@ public class StationServlet extends HttpServlet {
                 request.setAttribute("station", st);
                 request.getRequestDispatcher("/stations/modifier.jsp").forward(request, response);
             } else {
-                request.setAttribute("err", "Station introuvable.");
+                request.setAttribute("erreur", "Station introuvable.");
                 request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
             }
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Erreur lors de l'affichage du formulaire", e);
-            request.setAttribute("err", "Erreur technique: " + e.getMessage());
+            request.setAttribute("erreur", "Erreur technique: " + e.getMessage());
             request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
         }
     }

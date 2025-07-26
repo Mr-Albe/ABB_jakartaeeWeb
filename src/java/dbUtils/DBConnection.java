@@ -11,7 +11,7 @@ public class DBConnection {
         Class.forName("com.mysql.cj.jdbc.Driver");
 
         // Paramètres de connexion
-        String url = "jdbc:mysql://localhost:3306/stationDB";
+        String url = "jdbc:mysql://localhost:3310/stationDB";
         String user = "root";
         String password = "";
 
