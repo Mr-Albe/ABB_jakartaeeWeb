@@ -95,26 +95,20 @@ public class StationDao implements IdaO<StationModel> {
     }
 
     @Override
-    public boolean supprimer(int id) throws SQLException, ClassNotFoundException {
+    public boolean supprimer(int id) throws SQLException, ClassNotFoundException,SQLIntegrityConstraintViolationException {
         String sql = "DELETE FROM STATION WHERE id = ?";
-        
-        Connection conn = null;
-        PreparedStatement ps = null;
-
-        try {
-            conn = DBConnection.getConnection();
-            ps = conn.prepareStatement(sql);
-            ps.setInt(1, id);
-
-            return ps.executeUpdate() > 0;
-        } finally {
-            closeResources(conn, ps, null);
-            try (Connection connect = DBConnection.getConnection(); PreparedStatement pds = connect.prepareStatement(sql)) {
-                pds.setInt(1, id);
-                return pds.executeUpdate() > 0;
-                 
-            }
-        }
+        try(Connection connect = DBConnection.getConnection(); PreparedStatement pds = connect.prepareStatement(sql)) {
+            pds.setInt(1, id);
+            return pds.executeUpdate() > 0;
+        } 
+//             finally {
+//            closeResources(conn, ps, null);
+//            try (Connection connect = DBConnection.getConnection(); PreparedStatement pds = connect.prepareStatement(sql)) {
+//                pds.setInt(1, id);
+//                return pds.executeUpdate() > 0;
+//                 
+//            }
+//        }
     }
 
     @Override

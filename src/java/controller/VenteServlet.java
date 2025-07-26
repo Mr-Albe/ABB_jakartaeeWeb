@@ -70,7 +70,7 @@ public class VenteServlet extends HttpServlet {
         }
     }
 
-    // Methode pour valider les champs du formulaire
+    // Methode pour valider les champs du formulaire de vente
     private VenteModel lireEtValiderVente(HttpServletRequest request) {
         String stationIdStr = request.getParameter("idStation");
         String typeCarburant = request.getParameter("typeCarburant");

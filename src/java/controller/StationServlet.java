@@ -4,11 +4,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.sql.SQLIntegrityConstraintViolationException;
+
 import model.StationModel;
 import serviceImplement.StationDao;
 
@@ -26,8 +29,7 @@ public class StationServlet extends HttpServlet {
                 supprimerStation(request, response);
             } else if ("edit".equals(action)) {
                 afficherFormulaireEdition(request, response);
-            } 
-            else {
+            } else {
                 load(request, response);
             }
         } catch (Exception e) {
@@ -51,8 +53,7 @@ public class StationServlet extends HttpServlet {
                 request.getSession().invalidate();
                 response.sendRedirect(request.getContextPath() + "/login.jsp");
                 return;
-            }
-            else {
+            } else {
                 load(request, response);
             }
         } catch (Exception e) {
@@ -70,47 +71,78 @@ public class StationServlet extends HttpServlet {
             List<StationModel> listStation = sdDao.afficherTout();
             request.setAttribute("listStation", listStation);
             request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
+        } catch (SQLIntegrityConstraintViolationException e) {
+            request.setAttribute("erreur", "Ouf! Impossible de supprimer cette station");
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Erreur lors du chargement des stations", e);
-            request.setAttribute("erreur", "Erreur de connexion à la base de données");
+            logger.log(Level.SEVERE, "Désolé! une Erreur lors du chargement des stations", e);
+            request.setAttribute("erreur", "Désolé! une erreur de connexion à la base de données");
             request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
         }
     }
 
+    // ...
+    private void conserverValeursFormulaire(HttpServletRequest request) {
+        request.setAttribute("numero", request.getParameter("numero"));
+        request.setAttribute("rue", request.getParameter("rue"));
+        request.setAttribute("commune", request.getParameter("commune"));
+        request.setAttribute("capaciteGazoline", request.getParameter("capaciteGazoline"));
+        request.setAttribute("quantiteGazoline", request.getParameter("quantiteGazoline"));
+        request.setAttribute("capaciteDiesel", request.getParameter("capaciteDiesel"));
+        request.setAttribute("quantiteDiesel", request.getParameter("quantiteDiesel"));
+    }
+
+    // Methode pour lire et valider le formulaire
+    private StationModel lireEtvaliderStation(HttpServletRequest request) {
+        String numero = request.getParameter("numero");
+        String rue = request.getParameter("rue");
+        String commune = request.getParameter("commune");
+        String capaciteGazolineSTr = request.getParameter("capaciteGazoline");
+        String quantiteGazolineSTr = request.getParameter("quantiteGazoline");
+        String capaciteDieselSTr = request.getParameter("capaciteDiesel");
+        String quantiteDieselSTr = request.getParameter("quantiteDiesel");
+
+        if (numero == null || numero.trim().isEmpty()
+                || rue == null || rue.trim().isEmpty()
+                || commune == null || commune.trim().isEmpty()
+                || capaciteGazolineSTr == null || capaciteGazolineSTr.trim().isEmpty()
+                || quantiteGazolineSTr == null || quantiteGazolineSTr.trim().isEmpty()
+                || capaciteDieselSTr == null || capaciteDieselSTr.trim().isEmpty()
+                || quantiteDieselSTr == null || quantiteDieselSTr.trim().isEmpty()) {
+            throw new IllegalArgumentException("Tous les champs textuels sont obligatoires");
+        }
+
+        int capaciteGazoline = Integer.parseInt(capaciteGazolineSTr.trim());
+        int quantiteGazoline = Integer.parseInt(quantiteGazolineSTr.trim());
+        int capaciteDiesel = Integer.parseInt(capaciteDieselSTr.trim());
+        int quantiteDiesel = Integer.parseInt(quantiteDieselSTr.trim());
+
+        if (quantiteGazoline > capaciteGazoline) {
+            throw new IllegalArgumentException("La quantité Gazoline ne peut pas dépasser la capacité");
+        }
+
+        if (quantiteDiesel > capaciteDiesel) {
+            throw new IllegalArgumentException("La quantité Diesel ne peut pas dépasser la capacité");
+        }
+
+        return new StationModel(0, numero, rue, commune, capaciteGazoline, quantiteGazoline, capaciteDiesel, quantiteDiesel);
+    }
+
+    // Methode pour l'enregistrement des stations
     private void enregistrerNouvelleStation(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         StationDao sdDao = null;
         try {
-            String numero = request.getParameter("numero");
-            String rue = request.getParameter("rue");
-            String commune = request.getParameter("commune");
-
-            if (numero == null || rue == null || commune == null
-                    || numero.isEmpty() || rue.isEmpty() || commune.isEmpty()) {
-                throw new IllegalArgumentException("Tous les champs textuels sont obligatoires");
-            }
-
-            int capaciteGazoline = Integer.parseInt(request.getParameter("capaciteGazoline"));
-            int quantiteGazoline = Integer.parseInt(request.getParameter("quantiteGazoline"));
-            int capaciteDiesel = Integer.parseInt(request.getParameter("capaciteDiesel"));
-            int quantiteDiesel = Integer.parseInt(request.getParameter("quantiteDiesel"));
-
-            if (quantiteGazoline > capaciteGazoline) {
-                throw new IllegalArgumentException("La quantité Gazoline ne peut pas dépasser la capacité");
-            }
-
-            if (quantiteDiesel > capaciteDiesel) {
-                throw new IllegalArgumentException("La quantité Diesel ne peut pas dépasser la capacité");
-            }
+            // on recupere un objet de StationModel de la methode lireEtvaliderStation(param)
+            StationModel stationForm = lireEtvaliderStation(request);
 
             StationModel stModel = new StationModel();
-            stModel.setNumero(numero);
-            stModel.setRue(rue);
-            stModel.setCommune(commune);
-            stModel.setCapaciteGazoline(capaciteGazoline);
-            stModel.setQuantiteGazoline(quantiteGazoline);
-            stModel.setCapaciteDiesel(capaciteDiesel);
-            stModel.setQuantiteDiesel(quantiteDiesel);
+            stModel.setNumero(stationForm.getNumero());
+            stModel.setRue(stationForm.getRue());
+            stModel.setCommune(stationForm.getCommune());
+            stModel.setCapaciteGazoline(stationForm.getCapaciteGazoline());
+            stModel.setQuantiteGazoline(stationForm.getQuantiteGazoline());
+            stModel.setCapaciteDiesel(stationForm.getCapaciteDiesel());
+            stModel.setQuantiteDiesel(stationForm.getQuantiteDiesel());
 
             sdDao = new StationDao();
             boolean resultat = sdDao.ajouter(stModel);
@@ -138,53 +170,24 @@ public class StationServlet extends HttpServlet {
         }
     }
 
-    private void conserverValeursFormulaire(HttpServletRequest request) {
-        request.setAttribute("numero", request.getParameter("numero"));
-        request.setAttribute("rue", request.getParameter("rue"));
-        request.setAttribute("commune", request.getParameter("commune"));
-        request.setAttribute("capaciteGazoline", request.getParameter("capaciteGazoline"));
-        request.setAttribute("quantiteGazoline", request.getParameter("quantiteGazoline"));
-        request.setAttribute("capaciteDiesel", request.getParameter("capaciteDiesel"));
-        request.setAttribute("quantiteDiesel", request.getParameter("quantiteDiesel"));
-    }
-
     private void modifierStationExistante(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         StationDao sdDao = null;
         try {
             int id = Integer.parseInt(request.getParameter("id"));
 
-            String numero = request.getParameter("numero");
-            String rue = request.getParameter("rue");
-            String commune = request.getParameter("commune");
-
-            if (numero == null || rue == null || commune == null
-                    || numero.isEmpty() || rue.isEmpty() || commune.isEmpty()) {
-                throw new IllegalArgumentException("Tous les champs textuels sont obligatoires");
-            }
-
-            int capaciteGazoline = Integer.parseInt(request.getParameter("capaciteGazoline"));
-            int quantiteGazoline = Integer.parseInt(request.getParameter("quantiteGazoline"));
-            int capaciteDiesel = Integer.parseInt(request.getParameter("capaciteDiesel"));
-            int quantiteDiesel = Integer.parseInt(request.getParameter("quantiteDiesel"));
-
-            if (quantiteGazoline > capaciteGazoline) {
-                throw new IllegalArgumentException("La quantité Gazoline ne peut pas dépasser la capacité");
-            }
-
-            if (quantiteDiesel > capaciteDiesel) {
-                throw new IllegalArgumentException("La quantité Diesel ne peut pas dépasser la capacité");
-            }
+            // on recupere un objet de StationModel de la methode lireEtvaliderStation(param)
+            StationModel stationForm = lireEtvaliderStation(request);
 
             StationModel stModel = new StationModel();
             stModel.setId(id);
-            stModel.setNumero(numero);
-            stModel.setRue(rue);
-            stModel.setCommune(commune);
-            stModel.setCapaciteGazoline(capaciteGazoline);
-            stModel.setQuantiteGazoline(quantiteGazoline);
-            stModel.setCapaciteDiesel(capaciteDiesel);
-            stModel.setQuantiteDiesel(quantiteDiesel);
+            stModel.setNumero(stationForm.getNumero());
+            stModel.setRue(stationForm.getRue());
+            stModel.setCommune(stationForm.getCommune());
+            stModel.setCapaciteGazoline(stationForm.getCapaciteGazoline());
+            stModel.setQuantiteGazoline(stationForm.getQuantiteGazoline());
+            stModel.setCapaciteDiesel(stationForm.getCapaciteDiesel());
+            stModel.setQuantiteDiesel(stationForm.getQuantiteDiesel());
 
             sdDao = new StationDao();
             boolean resultat = sdDao.modifier(stModel);
@@ -199,6 +202,11 @@ public class StationServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/StationServlet");
             return;
 
+        } catch (IllegalArgumentException e) {
+            logger.log(Level.SEVERE, "Erreur lors de la modification", e);
+            request.setAttribute("erreur", e.getMessage());
+            conserverValeursFormulaire(request);
+            request.getRequestDispatcher("/stations/modifier.jsp").forward(request, response);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Erreur lors de la modification", e);
             request.setAttribute("erreur", "Erreur lors de la modification: " + e.getMessage());
