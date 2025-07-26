@@ -59,9 +59,8 @@ public class StationDao implements IdaO<StationModel> {
         String sql = "DELETE FROM STATION WHERE id = ?";
         try (Connection connect = DBConnection.getConnection(); PreparedStatement pds = connect.prepareStatement(sql)) {
             pds.setInt(1, id);
-            pds.executeUpdate();
+            return pds.executeUpdate()>0;
         }
-        return false;
     }
 
     /**
