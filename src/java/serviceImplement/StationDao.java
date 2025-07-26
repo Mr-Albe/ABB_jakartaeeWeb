@@ -100,15 +100,7 @@ public class StationDao implements IdaO<StationModel> {
         try(Connection connect = DBConnection.getConnection(); PreparedStatement pds = connect.prepareStatement(sql)) {
             pds.setInt(1, id);
             return pds.executeUpdate() > 0;
-        } 
-//             finally {
-//            closeResources(conn, ps, null);
-//            try (Connection connect = DBConnection.getConnection(); PreparedStatement pds = connect.prepareStatement(sql)) {
-//                pds.setInt(1, id);
-//                return pds.executeUpdate() > 0;
-//                 
-//            }
-//        }
+        }
     }
 
     @Override

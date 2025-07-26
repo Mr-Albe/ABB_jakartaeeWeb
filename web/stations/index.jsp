@@ -1,13 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
 <%@ page import="model.StationModel" %>
+<%@include file="/layout/isConnect.jsp"  %>
 
 <%@ include file="/layout/header.jsp" %>
 <%@include file="/layout/sidebar.jsp" %>
 
 <%
-    List<StationModel> listStation = (List<StationModel>) request.getAttribute("listStation");
-    String erreur = (String) request.getAttribute("erreur");
+    List<StationModel> listStation = (List<StationModel>) session.getAttribute("listStation");
+    
+    String erreur = (String) session.getAttribute("erreur");
     int stationCount = listStation != null ? listStation.size() : 0;
 
     // Calcul des moyennes
@@ -56,9 +58,11 @@
             </div>
         </div>
     </div>
-    <% }
-        request.setAttribute("erreur", null);
+    <%
+            session.removeAttribute("erreur");
+        }
     %>
+
 
     <!-- Stats cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

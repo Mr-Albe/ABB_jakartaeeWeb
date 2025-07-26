@@ -1,13 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%
-    // Verifie si l'utilisateur est connecte
-    if (session.getAttribute("username") == null) {
-        // Redirige vers la page de connexion
-        response.sendRedirect("login.jsp");
-        return;
-    }
-%>
 
+<%@include file="/layout/isConnect.jsp"  %>
 <%@ include file="/layout/header.jsp" %>
 <%@include file="/layout/sidebar.jsp" %>
 

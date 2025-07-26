@@ -69,13 +69,13 @@ public class StationServlet extends HttpServlet {
         try {
             sdDao = new StationDao();
             List<StationModel> listStation = sdDao.afficherTout();
-            request.setAttribute("listStation", listStation);
-            request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
+            request.getSession().setAttribute("listStation", listStation);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Désolé! une Erreur lors du chargement des stations", e);
-            request.setAttribute("erreur", "Désolé! une erreur de connexion à la base de données");
-            request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
+            request.getSession().setAttribute("erreur", "Erreur de chargement");
         }
+        //request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/stations/index.jsp");
     }
 
     // ...
@@ -225,12 +225,12 @@ public class StationServlet extends HttpServlet {
                 request.setAttribute("station", st);
                 request.getRequestDispatcher("/stations/modifier.jsp").forward(request, response);
             } else {
-                request.setAttribute("erreur", "Station introuvable.");
+                request.getSession().setAttribute("erreur", "Station introuvable.");
                 request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
             }
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Erreur lors de l'affichage du formulaire", e);
-            request.setAttribute("erreur", "Erreur technique: " + e.getMessage());
+            request.getSession().setAttribute("erreur", "Erreur technique: " + e.getMessage());
             request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
         }
     }
@@ -244,18 +244,19 @@ public class StationServlet extends HttpServlet {
             boolean resultat = sdDao.supprimer(id);
 
             if (!resultat) {
-                request.setAttribute("erreur", "Échec de la suppression de la station");
+                request.getSession().setAttribute("erreur", "Échec de la suppression de la station");
                 load(request, response);
             } else {
+                request.getSession().setAttribute("success", "Suppression réussi !");
                 response.sendRedirect(request.getContextPath() + "/StationServlet");
             }
         } catch (SQLIntegrityConstraintViolationException e) {
             logger.log(Level.SEVERE, "Erreur lors de la suppression", e);
-            request.setAttribute("erreur", "Ouf! ce n'est pas de votre faute, cette station ne peut pas etre supprimee en raison de ces activites: ");
+            request.getSession().setAttribute("erreur", "Ouf! ce n'est pas de votre faute, cette station ne peut pas etre supprimee en raison de ces activites: ");
             load(request, response);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Erreur lors de la suppression", e);
-            request.setAttribute("erreur", "Erreur lors de la suppression: " + e.getMessage());
+            request.getSession().setAttribute("erreur", "Erreur lors de la suppression: " + e.getMessage());
             load(request, response);
         }
     }

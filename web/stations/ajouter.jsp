@@ -1,5 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@include file="/layout/isConnect.jsp"  %>
+
 <%@ include file="/layout/header.jsp" %>
+<%@include file="/layout/sidebar.jsp" %>
 
 <div class="max-w-4xl mx-auto px-4 py-8">
 

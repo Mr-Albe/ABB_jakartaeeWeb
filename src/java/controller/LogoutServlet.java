@@ -4,20 +4,18 @@
  */
 package controller;
 
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.sql.SQLException;
-import model.UserModel;
-import serviceImplement.UserDao;
 
-
-public class LoginServlet extends HttpServlet {
-
-    UserDao userDao = null;
+/**
+ *
+ * @author bendy
+ */
+public class LogoutServlet extends HttpServlet {
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -31,7 +29,12 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        processRequest(request, response);
+        HttpSession session = request.getSession();
+        if (session != null) {
+            // Detruit la session;
+            session.invalidate(); 
+        }
+        response.sendRedirect("login.jsp");
     }
 
     /**
@@ -44,29 +47,8 @@ public class LoginServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-
-        try {
-            userDao = new UserDao();
-            UserModel user = userDao.rechercherParUsernameEtPassword(username, password);
-            
-            if (user != null) {
-                HttpSession session = request.getSession();
-                session.setAttribute("user", user);
-                System.out.println("Utilisateur connecté : " + user.getUsername());
-                response.sendRedirect("dashboard.jsp");
-            } else {
-                request.setAttribute("errorLogin", "Nom d'utilisateur ou mot de passe incorrect.");
-                request.getRequestDispatcher("login.jsp").forward(request, response);
-            }
-
-        } catch (ServletException | IOException | ClassNotFoundException | SQLException e) {
-            request.setAttribute("errorLogin", "Erreur de connection");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
-        }
+            throws ServletException, IOException {
+        //
     }
 
     /**
