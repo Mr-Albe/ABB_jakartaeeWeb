@@ -7,7 +7,7 @@
         station = new StationModel();
     }
     
-    String error = (String) request.getAttribute("error");
+    String error = (String) request.getAttribute("erreur");
     boolean isEdit = station != null;
 %>
 
@@ -15,7 +15,7 @@
     <div class="bg-white shadow rounded-lg p-6">
         <h2 class="text-2xl font-bold text-gray-800 mb-6"><%= isEdit ? "Modifier" : "Ajouter" %> une station</h2>
         
-        <% if (error != null) { %>
+        <% if (error != null && !error.isEmpty()) { %>
             <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">

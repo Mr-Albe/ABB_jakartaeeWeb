@@ -14,10 +14,7 @@ import java.sql.SQLException;
 import model.UserModel;
 import serviceImplement.UserDao;
 
-/**
- *
- * @author bendy
- */
+
 public class LoginServlet extends HttpServlet {
 
     UserDao userDao = null;
