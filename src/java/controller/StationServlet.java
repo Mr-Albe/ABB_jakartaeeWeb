@@ -124,7 +124,7 @@ public class StationServlet extends HttpServlet {
             throw new IllegalArgumentException("La quantité Diesel ne peut pas dépasser la capacité");
         }
 
-        return new StationModel(0, numero, rue, commune, capaciteGazoline, quantiteGazoline, capaciteDiesel, quantiteDiesel);
+        return new StationModel(0, numero, rue, commune, capaciteGazoline, capaciteDiesel, quantiteGazoline, quantiteDiesel);
     }
 
     // Methode pour l'enregistrement des stations
@@ -172,14 +172,15 @@ public class StationServlet extends HttpServlet {
 
     private void modifierStationExistante(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        StationDao sdDao = null;
+        StationDao sdDao;
+        StationModel stModel = null;
         try {
             int id = Integer.parseInt(request.getParameter("id"));
 
             // on recupere un objet de StationModel de la methode lireEtvaliderStation(param)
             StationModel stationForm = lireEtvaliderStation(request);
 
-            StationModel stModel = new StationModel();
+            stModel = new StationModel();
             stModel.setId(id);
             stModel.setNumero(stationForm.getNumero());
             stModel.setRue(stationForm.getRue());
@@ -205,7 +206,7 @@ public class StationServlet extends HttpServlet {
         } catch (IllegalArgumentException e) {
             logger.log(Level.SEVERE, "Erreur lors de la modification", e);
             request.setAttribute("erreur", e.getMessage());
-            conserverValeursFormulaire(request);
+            request.setAttribute("station", stModel);
             request.getRequestDispatcher("/stations/modifier.jsp").forward(request, response);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Erreur lors de la modification", e);
@@ -250,6 +251,10 @@ public class StationServlet extends HttpServlet {
             } else {
                 response.sendRedirect(request.getContextPath() + "/StationServlet");
             }
+        } catch (SQLIntegrityConstraintViolationException e) {
+            logger.log(Level.SEVERE, "Erreur lors de la suppression", e);
+            request.setAttribute("erreur", "Ouf! ce n'est pas de votre faute, cette station ne peut pas etre supprimee en raison de ces activites: ");
+            load(request, response);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Erreur lors de la suppression", e);
             request.setAttribute("erreur", "Erreur lors de la suppression: " + e.getMessage());
