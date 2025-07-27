@@ -10,7 +10,7 @@
     <div class="container mx-auto px-4 py-6">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
             <h2 class="text-2xl font-bold text-gray-800">Liste des approvisionnements</h2>
-            <a href="${pageContext.request.getContextPath()}/approvisionnement/ajouter.jsp" class="mt-4 md:mt-0 inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300">
+            <a href="${pageContext.request.getContextPath()}/approvisionnement/add_edit.jsp" class="mt-4 md:mt-0 inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300">
                 <i class="fas fa-plus mr-2"></i> Nouvelle livraison
             </a>
         </div>

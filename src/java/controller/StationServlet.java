@@ -9,8 +9,6 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.sql.SQLIntegrityConstraintViolationException;
 
 import model.StationModel;
@@ -150,17 +148,10 @@ public class StationServlet extends HttpServlet {
 
             session.setAttribute("success", "Enregistrement fait avec succès.");
             response.sendRedirect(request.getContextPath() + "/StationServlet");
-        } //            catch (NumberFormatException e) {
-        //            session.setAttribute("erreur", "Veuillez entrer des nombres valides pour les capacités et quantités");
-        //            conserverValeursFormulaire(request);
-        //            request.getRequestDispatcher("/stations/ajouter.jsp").forward(request, response);
-        //        } catch (IllegalArgumentException e) {
-        //            session.setAttribute("erreur", e.getMessage());
-        //            conserverValeursFormulaire(request);
-        //            request.getRequestDispatcher("/stations/ajouter.jsp").forward(request, response);
+        }
         catch (Exception e) {
             request.setAttribute("erreur", getMessageErreurUtilisateur(e));
-            request.getRequestDispatcher("/stations/ajouter.jsp").forward(request, response);
+            request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
         }
     }
 
@@ -199,7 +190,7 @@ public class StationServlet extends HttpServlet {
             request.setAttribute("erreur", getMessageErreurUtilisateur(e));
 
             // Forward vers la page de modification
-            request.getRequestDispatcher("/stations/modifier.jsp").forward(request, response);
+            request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
         }
     }
 
@@ -229,14 +220,14 @@ public class StationServlet extends HttpServlet {
 
             if (st != null) {
                 request.setAttribute("station", st);
-                request.getRequestDispatcher("/stations/modifier.jsp").forward(request, response);
+                request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
             } else {
                 request.getSession().setAttribute("erreur", "Station introuvable.");
                 request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
             }
         } catch (Exception e) {
             request.getSession().setAttribute("erreur", "Erreur technique: " + e.getMessage());
-            request.getRequestDispatcher("/stations/modifier.jsp").forward(request, response);
+            request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
         }
     }
 

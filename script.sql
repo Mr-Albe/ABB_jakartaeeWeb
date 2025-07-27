@@ -63,8 +63,6 @@ INSERT INTO station (numero, rue, commune, capacite_gazoline, capacite_diesel, q
 ('ST009', 'Rue du Centre', 'Jacmel', 8500, 6500, 3000, 2000),
 ('ST010', 'Route Nationale #1', 'Gonaïves', 9500, 7000, 4500, 3000);
 
-
-
 -- Insertion des approvisionnements
 INSERT INTO approvisionnement (num_station, type_carburant, quantite, date_livraison, fournisseur) VALUES
 ('ST001', 'gazoline', 2000, '2025-07-01', 'Total Haïti'),

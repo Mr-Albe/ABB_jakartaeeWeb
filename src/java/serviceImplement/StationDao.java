@@ -203,8 +203,8 @@ public class StationDao implements IdaO<StationModel> {
         return listStation;
     }
 
-    public int getCapaciteParStationIdType(String num_tation, String typeCarburant) throws SQLException, ClassNotFoundException {
-        String sql = "SELECT capacite_gazoline, capacite_diesel FROM station WHERE id = ?";
+    public int getCapaciteParStationIdType(String num_station, String typeCarburant) throws SQLException, ClassNotFoundException {
+        String sql = "SELECT capacite_gazoline, capacite_diesel FROM station WHERE numero = ?";
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -213,7 +213,7 @@ public class StationDao implements IdaO<StationModel> {
         try {
             conn = DBConnection.getConnection();
             ps = conn.prepareStatement(sql);
-            ps.setString(1, num_tation);
+            ps.setString(1, num_station);
             rs = ps.executeQuery();
 
             if (rs.next()) {
@@ -225,7 +225,7 @@ public class StationDao implements IdaO<StationModel> {
                     throw new IllegalArgumentException("Type de carburant invalide : " + typeCarburant);
                 }
             } else {
-                throw new SQLException("Station introuvable avec NUMERO : " + num_tation);
+                throw new SQLException("Station introuvable avec NUMERO : " + num_station);
             }
         } finally {
             closeResources(conn, ps, rs);

@@ -46,24 +46,25 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
 
     /**
      * Met à jour les informations d’un approvisionnement existant dans la base
-     * de données. Cette méthode modifie à la fois les détails de
+     * de données.Cette méthode modifie à la fois les détails de
      * l'approvisionnement (station, type de carburant, quantité, date,
      * fournisseur) et ajuste automatiquement la quantité de carburant
      * correspondante dans la station (quantité_diesel ou quantité_gazoline).
      *
-     * *
+     *
+     * @param app
      */
     @Override
     public boolean modifier(ApprovisionnementModel app) throws ClassNotFoundException, SQLException {
         String sqlGetOld = "SELECT quantite, type_carburant, num_station FROM APPROVISIONNEMENT WHERE id = ?";
-        String sqlUpdateApp = "UPDATE APPROVISIONNEMENT SET num_station =?, type_carburant =?, quantite =?, date_livraison =?, id_fournisseur = ? WHERE id = ?";
+        String sqlUpdateApp = "UPDATE APPROVISIONNEMENT SET num_station = ?, type_carburant = ?, quantite = ?, date_livraison = ?, fournisseur = ? WHERE id = ?";
         String sqlSubDiesel = "UPDATE STATION SET quantite_diesel = quantite_diesel - ? WHERE id = ?";
         String sqlSubGazo = "UPDATE STATION SET quantite_gazoline = quantite_gazoline - ? WHERE id = ?";
         String sqlAddDiesel = "UPDATE STATION SET quantite_diesel = quantite_diesel + ? WHERE id = ?";
         String sqlAddGazo = "UPDATE STATION SET quantite_gazoline = quantite_gazoline + ? WHERE id = ?";
 
         try (Connection connect = DBConnection.getConnection()) {
-            connect.setAutoCommit(false); // Démarre une transaction
+            connect.setAutoCommit(false); 
 
             // 1. Récupérer l'ancienne livraison
             int ancienneQuantite = 0;
@@ -121,7 +122,7 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
                 }
             }
 
-            connect.commit(); // Tout s’est bien passé
+            connect.commit();
             return true;
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -170,7 +171,6 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
             return appModel;
         }
     }
-    
 
     /**
      *

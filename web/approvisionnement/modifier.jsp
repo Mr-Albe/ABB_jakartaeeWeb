@@ -1,84 +1,74 @@
-<%@page import="serviceImplement.ApprovisionnementDao"%>
-<%@page import="model.ApprovisionnementModel"%>
-<%@page import="model.StationModel"%>
-<%@page import="java.util.List"%>
-<%@page import="serviceImplement.StationDao"%>
-
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="/layout/header.jsp" %>
-
-<% StationDao station = new StationDao();
-    List<StationModel> StationList = station.afficherTout();
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
     
+    // Initialisation
+    HttpSession session = request.getSession();
+    approvisionnement = new ApprovisionnementModel();
     
-    ApprovisionnementDao appDao = new ApprovisionnementDao();
-    ApprovisionnementModel appModel = (ApprovisionnementModel) request.getAttribute("approvisionnement");
-    if (appModel == null) {
-        appModel = new ApprovisionnementModel();
+    try {
+        // 1. Récupération et validation des paramètres
+        String idStr = request.getParameter("id");
+        String quantiteStr = request.getParameter("quantite");
+        String dateStr = request.getParameter("dateLivraison");
+        
+        // Validation basique
+        if (quantiteStr == null || quantiteStr.isEmpty() 
+                || dateStr == null || dateStr.isEmpty()) {
+            throw new IllegalArgumentException("Tous les champs sont obligatoires");
+        }
+        
+        // 2. Conversion des valeurs
+        long id = idStr != null && !idStr.isEmpty() ? Long.parseLong(idStr) : 0;
+        long quantite = Long.parseLong(quantiteStr);
+        LocalDate dateLivraison = LocalDate.parse(dateStr);
+        
+        // 3. Vérification des contraintes métier
+        if (quantite <= 0) {
+            throw new IllegalArgumentException("La quantité doit être positive");
+        }
+        
+        // 4. Hydratation de l'objet
+        approvisionnement.setId(id);
+        approvisionnement.setQuantite(quantite);
+        approvisionnement.setDateLivraison(dateLivraison);
+        approvisionnement.setNumStation(request.getParameter("stationId"));
+        approvisionnement.setTypeCarburant(request.getParameter("type"));
+        approvisionnement.setFournisseur(request.getParameter("fournisseur"));
+        
+        // 5. Vérification capacité
+        stationDao = new StationDao();
+        int capacite = stationDao.getCapaciteParStationIdType(
+            approvisionnement.getNumStation(), 
+            approvisionnement.getTypeCarburant()
+        );
+        
+        if (quantite > capacite) {
+            throw new IllegalStateException(
+                "La quantité ne doit pas dépasser la capacité maximale (" + capacite + ")"
+            );
+        }
+        
+        // 6. Persistance
+        approDao = new ApprovisionnementDao();
+        if (id > 0) {
+            approDao.modifier(approvisionnement);
+        } else {
+            approDao.ajouter(approvisionnement);
+        }
+        
+        // 7. Succès - redirection
+        response.sendRedirect(request.getContextPath() + "/ApprovisionnementServlet");
+        
+    } catch (Exception e) {
+        // Journalisation
+        Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Erreur approvisionnement", e);
+        
+        // Préparation erreur
+        session.setAttribute("erreur", e.getMessage());
+        request.setAttribute("approvisionnement", approvisionnement);
+        
+        // Réaffichage formulaire
+        request.getRequestDispatcher("/approvisionnement/add_edit.jsp")
+               .forward(request, response);
     }
-    boolean isEdit = appModel != null;
-    
-    String dateValue = isEdit
-        ? appModel.getDateLivraison().toString()
-        : java.time.LocalDate.now().toString();
-    
-    String error = (String) request.getAttribute("erreur");
-    
-%>
-
-<%-- Affichage des erreurs --%>
-<% if (error != null && !error.isEmpty()){%>
-<div  style="color: red; background-color: #fee; padding: 10px; border: 1px solid red; margin-bottom: 10px;">
-
-    <h3><%= error%></h3>
-
-</div><hr>
-<%}%>
-
-<h3>Modifier un approvisionnement</h3>
-<form action="<%= request.getContextPath()%>/ApprovisionnementServlet" method="post">
-    <input type="hidden" name="action" value="edit" />
-
-    <input name="id" type="hidden" value="<%= isEdit ? appModel.getId() : "" %>">
-    
-    <div class="form-group"> 
-        <label> Numero Station :</label>
-        <select name="stationId">
-            <%for (StationModel st : StationList) {%>  
-            <option value="<%= isEdit ? appModel.getNumStation(): st.getNumero()%>"><%= isEdit ? appModel.getNumStation(): st.getNumero()%></option>
-            <%} %>
-        </select>
-    </div>
-
-    <div class="form-group"> 
-        <label>Type carburant :</label>
-        <select name="type" required>
-            <option value="gazoline" >Gazoline</option>
-            <option value="diesel">Diesel</option>
-        </select>
-    </div>
-
-    <div class="form-group"> 
-        <label>QuantitÃ© :</label>
-        <input type="number" name="quantite" min="1"  value="<%= isEdit ? appModel.getQuantite() : 0 %>" required >
-    </div>
-
-    <div class="form-group"> 
-        <label>Date :</label>
-        <input type="date" name="dateLivraison" id="dateLivraison" max="<%= java.time.LocalDate.now()%>" 
-               value="<%= dateValue %>" required>
-    </div>
-
-    <div class="form-group"> 
-        <label>Fournisseur :</label>
-        <select name="fournisseur" >
-            <option value="5"></option>
-        </select>
-    </div>
-
-    <div class="form-group"> 
-        <button type="submit">Enregistrer</button>
-    </div>
-</form>
-
-<%@ include file="/layout/footer.jsp" %>
+}
