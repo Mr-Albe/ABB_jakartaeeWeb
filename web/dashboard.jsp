@@ -1,12 +1,32 @@
+<%@page import="model.VenteModel"%>
+<%@page import="model.ApprovisionnementModel"%>
+<%@page import="java.util.List"%>
+<%@page import="model.StationModel"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%@include file="/layout/isConnect.jsp"  %>
 <%@ include file="/layout/header.jsp" %>
 <%@include file="/layout/sidebar.jsp" %>
 
+<%    List<StationModel> listStation = (List<StationModel>) session.getAttribute("listeStation");
+    List<ApprovisionnementModel> listeAppro = (List<ApprovisionnementModel>) session.getAttribute("listeAppro");
+    List<VenteModel> listeVente = (List<VenteModel>) session.getAttribute("listeVente");
+    Double totalRevenu = (Double) session.getAttribute("totalRevenu");
+
+    String erreur = (String) session.getAttribute("erreur");
+    int stationCount = listStation != null ? listStation.size() : 0;
+    int ApproCount = listeAppro != null ? listeAppro.size() : 0;
+    int venteCount = listeVente != null ? listeVente.size() : 0;
+%>
 <!-- Main Content -->
 <div class="content flex-grow overflow-auto">
-    <%@include file="/layout/topNavigation.jsp" %>
+    <header class="bg-white shadow-sm p-4 flex items-center">
+        <button id="mobileToggle" class="mr-4 text-gray-600 md:hidden">
+            <i class="fas fa-bars"></i>
+        </button>
+        <h1 class="text-xl font-bold text-gray-800">Tableau de bord</h1>
+
+    </header>
     <!-- Dashboard Content -->
     <main class="p-6">
         <!-- Stats Cards -->
@@ -18,32 +38,32 @@
                     </div>
                     <div>
                         <p class="text-gray-500">Stations</p>
-                        <h3 class="text-2xl font-bold">4</h3>
+                        <h3 class="text-2xl font-bold"><%= stationCount%></h3>
                     </div>
                 </div>
             </a>
-                <a href="${pageContext.request.contextPath}/ApprovisionnementServlet" class="dashboard-card bg-white rounded-lg shadow p-6 transition duration-300">
+            <a href="${pageContext.request.contextPath}/ApprovisionnementServlet" class="dashboard-card bg-white rounded-lg shadow p-6 transition duration-300">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
                         <i class="fas fa-truck text-xl"></i>
                     </div>
                     <div>
                         <p class="text-gray-500">Approvisionnements</p>
-                        <h3 class="text-2xl font-bold">12</h3>
+                        <h3 class="text-2xl font-bold"><%= ApproCount%></h3>
                     </div>
                 </div>
             </a>
-            <div class="dashboard-card bg-white rounded-lg shadow p-6 transition duration-300">
+            <a href="${pageContext.request.contextPath}/VenteServlet" class="dashboard-card bg-white rounded-lg shadow p-6 transition duration-300">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-purple-100 text-purple-600 mr-4">
                         <i class="fas fa-shopping-cart text-xl"></i>
                     </div>
                     <div>
                         <p class="text-gray-500">Ventes</p>
-                        <h3 class="text-2xl font-bold">156</h3>
+                        <h3 class="text-2xl font-bold"><%= venteCount%></h3>
                     </div>
                 </div>
-            </div>
+            </a>
             <div class="dashboard-card bg-white rounded-lg shadow p-6 transition duration-300">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-yellow-100 text-yellow-600 mr-4">
@@ -51,7 +71,7 @@
                     </div>
                     <div>
                         <p class="text-gray-500">Revenus</p>
-                        <h3 class="text-2xl font-bold">$24,560</h3>
+                        <h3 class="text-2xl font-bold">HTG <%= totalRevenu%></h3>
                     </div>
                 </div>
             </div>
@@ -74,190 +94,76 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        <tr>
+                        <%
+                            for (StationModel station : listStation) {
+                                // Calcul des pourcentages
+                                double pourcentageGazoline = (station.getCapaciteGazoline() > 0)
+                                        ? Math.round((station.getQuantiteGazoline() * 100.0 / station.getCapaciteGazoline()) * 10) / 10.0 : 0;
+                                double pourcentageDiesel = (station.getCapaciteDiesel() > 0)
+                                        ? Math.round((station.getQuantiteDiesel() * 100.0 / station.getCapaciteDiesel()) * 10) / 10.0 : 0;
+
+                                // Couleurs en fonction du niveau
+                                String gazolineColor = pourcentageGazoline < 20 ? "text-red-600" : "text-green-600";
+                                String dieselColor = pourcentageDiesel < 20 ? "text-red-600" : "text-green-600";
+                                String gazolineBarColor = pourcentageGazoline < 20 ? "bg-red-500" : "bg-green-500";
+                                String dieselBarColor = pourcentageDiesel < 20 ? "bg-red-500" : "bg-green-500";
+                        %>
+                        <tr class="hover:bg-gray-50 transition-colors duration-150">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
                                     <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
                                         <i class="fas fa-gas-pump text-blue-600"></i>
                                     </div>
                                     <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900">ST001</div>
-                                        <div class="text-sm text-gray-500">Cap-Haitien</div>
+                                        <div class="text-sm font-medium text-gray-900"><%= station.getNumero()%></div>
+                                        <div class="text-sm text-gray-500"><%= station.getCommune()%></div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">123, Rue 18, Cap-Haitien</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="mb-1">
-                                    <div class="flex justify-between text-sm">
-                                        <span>75%</span>
-                                        <span>750/1000 gal</span>
-                                    </div>
-                                    <div class="progress-bar mt-1">
-                                        <div class="progress-fill bg-blue-500" style="width: 75%"></div>
-                                    </div>
-                                </div>
+                                <div class="text-sm text-gray-900"><%= station.getRue()%></div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="mb-1">
                                     <div class="flex justify-between text-sm">
-                                        <span>60%</span>
-                                        <span>600/1000 gal</span>
+                                        <span class="<%= gazolineColor%> font-medium"><%= pourcentageGazoline%>%</span>
+                                        <span class="text-gray-500">
+                                            <%= station.getQuantiteGazoline()%>/<%= station.getCapaciteGazoline()%> gal
+                                        </span>
                                     </div>
-                                    <div class="progress-bar mt-1">
-                                        <div class="progress-fill bg-green-500" style="width: 60%"></div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
+                                        <div class="h-2 rounded-full <%= gazolineBarColor%>" 
+                                             style="width: <%= pourcentageGazoline%>%"></div>
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <button class="text-blue-600 hover:text-blue-900 mr-3">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-900">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="mb-1">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="<%= dieselColor%> font-medium"><%= pourcentageDiesel%>%</span>
+                                        <span class="text-gray-500">
+                                            <%= station.getQuantiteDiesel()%>/<%= station.getCapaciteDiesel()%> gal
+                                        </span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
+                                        <div class="h-2 rounded-full <%= dieselBarColor%>" 
+                                             style="width: <%= pourcentageDiesel%>%"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <a href="${pageContext.request.contextPath}/StationServlet?action=edit&id=<%= station.getId()%>" 
+                                   class="text-blue-600 hover:text-blue-900 mr-4">
+                                    <i class="fas fa-edit"></i> Modifier
+                                </a>
+                                <a href="${pageContext.request.contextPath}/StationServlet?action=delete&id=<%= station.getId()%>" 
+                                   class="text-red-600 hover:text-red-900" 
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette station ?');">
+                                    <i class="fas fa-trash"></i> Supprimer
+                                </a>
                             </td>
                         </tr>
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                        <i class="fas fa-gas-pump text-blue-600"></i>
-                                    </div>
-                                    <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900">ST002</div>
-                                        <div class="text-sm text-gray-500">Limonade</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">456, Av. Liberté, Limonade</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="mb-1">
-                                    <div class="flex justify-between text-sm">
-                                        <span>45%</span>
-                                        <span>450/1000 gal</span>
-                                    </div>
-                                    <div class="progress-bar mt-1">
-                                        <div class="progress-fill bg-blue-500" style="width: 45%"></div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="mb-1">
-                                    <div class="flex justify-between text-sm">
-                                        <span>30%</span>
-                                        <span>300/1000 gal</span>
-                                    </div>
-                                    <div class="progress-bar mt-1">
-                                        <div class="progress-fill bg-green-500" style="width: 30%"></div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <button class="text-blue-600 hover:text-blue-900 mr-3">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-900">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                        <i class="fas fa-gas-pump text-blue-600"></i>
-                                    </div>
-                                    <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900">ST003</div>
-                                        <div class="text-sm text-gray-500">Terrier-Rouge</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">789, Rue Principale, Terrier-Rouge</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="mb-1">
-                                    <div class="flex justify-between text-sm">
-                                        <span>85%</span>
-                                        <span>850/1000 gal</span>
-                                    </div>
-                                    <div class="progress-bar mt-1">
-                                        <div class="progress-fill bg-blue-500" style="width: 85%"></div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="mb-1">
-                                    <div class="flex justify-between text-sm">
-                                        <span>70%</span>
-                                        <span>700/1000 gal</span>
-                                    </div>
-                                    <div class="progress-bar mt-1">
-                                        <div class="progress-fill bg-green-500" style="width: 70%"></div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <button class="text-blue-600 hover:text-blue-900 mr-3">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-900">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                        <i class="fas fa-gas-pump text-blue-600"></i>
-                                    </div>
-                                    <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900">ST004</div>
-                                        <div class="text-sm text-gray-500">Fort-Liberté</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">101, Blvd. Maritime, Fort-Liberté</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="mb-1">
-                                    <div class="flex justify-between text-sm">
-                                        <span>25%</span>
-                                        <span>250/1000 gal</span>
-                                    </div>
-                                    <div class="progress-bar mt-1">
-                                        <div class="progress-fill bg-blue-500" style="width: 25%"></div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="mb-1">
-                                    <div class="flex justify-between text-sm">
-                                        <span>40%</span>
-                                        <span>400/1000 gal</span>
-                                    </div>
-                                    <div class="progress-bar mt-1">
-                                        <div class="progress-fill bg-green-500" style="width: 40%"></div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <button class="text-blue-600 hover:text-blue-900 mr-3">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-900">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
+                        <% }%>
                     </tbody>
                 </table>
             </div>

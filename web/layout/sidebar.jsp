@@ -16,7 +16,7 @@
                 <p class="text-blue-200 uppercase text-xs font-bold mb-2 nav-text">Menu Principal</p>
 
                 <!-- Tableau de bord -->
-                <a href="${pageContext.request.contextPath}/dashboard.jsp" class="nav-item flex items-center py-2 px-3 rounded hover:bg-blue-700 mb-1 active">
+                <a href="${pageContext.request.contextPath}/Dashboard" class="nav-item flex items-center py-2 px-3 rounded hover:bg-blue-700 mb-1 active">
                     <i class="fas fa-tachometer-alt mr-3"></i>
                     <span class="nav-text">Tableau de bord</span>
                 </a>
@@ -74,8 +74,7 @@
                         <i class="fas fa-chevron-right dropdown-icon text-xs"></i>
                     </button>
                     <div class="dropdown-container">
-                        <a href="#" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Gestion des utilisateurs</a>
-                        <a href="#" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Rôles & permissions</a>
+                        <a href="${pageContext.request.contextPath}/User" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Liste des utilisateurs</a>
                     </div>
                 </div>
             </div>
