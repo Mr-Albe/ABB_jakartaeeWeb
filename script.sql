@@ -63,11 +63,7 @@ INSERT INTO station (numero, rue, commune, capacite_gazoline, capacite_diesel, q
 ('ST009', 'Rue du Centre', 'Jacmel', 8500, 6500, 3000, 2000),
 ('ST010', 'Route Nationale #1', 'Gonaïves', 9500, 7000, 4500, 3000);
 
--- Insertion des utilisateurs
-INSERT INTO users (username, password, role) VALUES
-('Bendy', 'password', 'admin'),
-('Albe', 'password', 'admin'),
-('Blemy', 'password', 'admin');
+
 
 -- Insertion des approvisionnements
 INSERT INTO approvisionnement (num_station, type_carburant, quantite, date_livraison, fournisseur) VALUES
@@ -94,3 +90,9 @@ INSERT INTO vente (id_station, type_carburant, quantite, prix_vente, date_vente,
 (8, 'diesel', 700, 215.00, '2025-07-11', 150500.00),
 (9, 'gazoline', 480, 235.00, '2025-07-11', 112800.00),
 (10, 'diesel', 520, 205.00, '2025-07-11', 106600.00);
+
+-- Insertion des utilisateurs
+INSERT INTO users (username, password, role) VALUES
+('Bendy', 'password', 'admin'),
+('Albe', 'password', 'admin'),
+('Blemy', 'password', 'admin');

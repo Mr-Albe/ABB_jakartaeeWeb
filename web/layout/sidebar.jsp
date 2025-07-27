@@ -57,8 +57,8 @@
                     <div class="dropdown-container">
                         <a href="${pageContext.request.getContextPath()}/vente/ajouter.jsp" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Nouvelle vente</a>
                         <a href="${pageContext.request.contextPath}/VenteServlet" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Journal des ventes</a>
-                        <a href="#" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Rapports</a>
-                        <a href="#" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Clients</a>
+<!--                        <a href="#" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Rapports</a>
+                        <a href="#" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Clients</a>-->
                     </div>
                 </div>
             </div>
