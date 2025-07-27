@@ -77,7 +77,7 @@
         </div>
     </div>
     <%
-            session.removeAttribute("success"); // Très important !
+            session.removeAttribute("success");
         }
     %>
 

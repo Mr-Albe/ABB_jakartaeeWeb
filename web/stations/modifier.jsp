@@ -1,6 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="model.StationModel" %>
+<%@include file="/layout/isConnect.jsp"  %>
+
 <%@ include file="/layout/header.jsp" %>
+<%@include file="/layout/sidebar.jsp" %>
+
 <%
     StationModel station = (StationModel) request.getAttribute("station");
     if (station == null) {
