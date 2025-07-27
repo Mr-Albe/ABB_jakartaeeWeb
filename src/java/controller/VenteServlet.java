@@ -91,7 +91,7 @@ public class VenteServlet extends HttpServlet {
         double prixUnitaire = Double.parseDouble(prixStr.trim());
         LocalDate dateVente = LocalDate.parse(dateStr.trim());
 
-        return new VenteModel(0,stationId, typeCarburant.trim(), quantiteDemandee, prixUnitaire, dateVente);
+        return new VenteModel(0, stationId, typeCarburant.trim(), quantiteDemandee, prixUnitaire, dateVente);
     }
 
     // Methode 
@@ -169,7 +169,7 @@ public class VenteServlet extends HttpServlet {
             // Recuperer la quantite de carburant de la station en utilisant la methode 
             //getquantiteParStationIdType(param1, param2) suivant le type de carburant choisi
             stationdao = new StationDao();
-            int stockDisponible = stationdao.getquantiteParStationIdType(venteForm .getStationId(), venteForm.getTypeCarburant());
+            int stockDisponible = stationdao.getquantiteParStationIdType(venteForm.getStationId(), venteForm.getTypeCarburant());
 
             if (stockDisponible >= venteForm.getQuantite()) {
                 venteModel = new VenteModel();
@@ -183,7 +183,7 @@ public class VenteServlet extends HttpServlet {
                 venteDao.ajouter(venteModel);
 
                 try {
-                    stationdao.retirerQuantite(venteForm.getStationId(),venteForm.getTypeCarburant(), venteForm.getQuantite());
+                    stationdao.retirerQuantite(venteForm.getStationId(), venteForm.getTypeCarburant(), venteForm.getQuantite());
                     load(request, response);
                     return;
 
@@ -209,15 +209,32 @@ public class VenteServlet extends HttpServlet {
     }
 
     //methode pour charger les donnees de la BD
-    protected void load(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//    protected void load(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        venteDao = new VenteDao();
+//        try {
+//            List<VenteModel> listVente = venteDao.afficherTout();
+//            request.setAttribute("vente", listVente);
+//            request.getRequestDispatcher("vente/index.jsp").forward(request, response);
+//        } catch (Exception e) {
+//            request.setAttribute("erreur", "Erreur de chargement : " + e.getMessage());
+//            request.getRequestDispatcher("vente/index.jsp").forward(request, response);
+//        }
+//    }
+    protected void load(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         venteDao = new VenteDao();
         try {
             List<VenteModel> listVente = venteDao.afficherTout();
             request.setAttribute("vente", listVente);
-            request.getRequestDispatcher("vente/index.jsp").forward(request, response);
+
+            // Ajout d'un log pour vérification
+            System.out.println("Chemin JSP: " + request.getServletContext().getRealPath("/vente/index.jsp"));
+
+            request.getRequestDispatcher("/vente/index.jsp").forward(request, response);
         } catch (Exception e) {
+            e.printStackTrace();
             request.setAttribute("erreur", "Erreur de chargement : " + e.getMessage());
-            request.getRequestDispatcher("vente/index.jsp").forward(request, response);
+//            request.getRequestDispatcher("/error.jsp").forward(request, response);
         }
     }
 
