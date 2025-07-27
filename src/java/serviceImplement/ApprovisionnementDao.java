@@ -9,7 +9,6 @@ import services.IdaO;
 
 public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
 
-    ResultSet rs = null;
     ApprovisionnementModel appModel = null;
 
     @Override
@@ -186,7 +185,7 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
         List<ApprovisionnementModel> appList = new ArrayList<>();
 
         try (Connection connect = DBConnection.getConnection(); PreparedStatement pds = connect.prepareStatement(selectSql)) {
-            rs = pds.executeQuery();
+            ResultSet rs = pds.executeQuery();
             while (rs.next()) {
                 appModel = new ApprovisionnementModel();
                 appModel.setId(rs.getInt("id"));
@@ -200,6 +199,7 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
                 appList.add(appModel);
             }
 
+            System.out.println(appList);
             return appList;
         }
 

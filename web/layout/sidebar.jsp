@@ -42,9 +42,8 @@
                         <i class="fas fa-chevron-right dropdown-icon text-xs"></i>
                     </button>
                     <div class="dropdown-container">
+                        <a href="${pageContext.request.contextPath}/ApprovisionnementServlet" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Liste approvisionnement</a>
                         <a href="#" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Nouvel approvisionnement</a>
-                        <a href="#" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Historique</a>
-                        <a href="#" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Fournisseurs</a>
                     </div>
                 </div>
 
@@ -90,7 +89,7 @@
                 </p>
                 <p class="text-blue-200 text-sm"><%= user.getRole()%></p>
             </div>
-            <a href="/Logout" class="ml-auto text-blue-200 hover:text-white">
+                <a href="${pageContext.request.contextPath}/Logout" class="ml-auto text-blue-200 hover:text-white">
                 <i class="fas fa-sign-out-alt"></i>
             </a>
         </div>

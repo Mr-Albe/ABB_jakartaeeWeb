@@ -1,7 +1,10 @@
 <%@page import="model.ApprovisionnementModel"%>
 <%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@include file="/layout/isConnect.jsp"  %>
+
 <%@ include file="/layout/header.jsp" %>
+<%@include file="/layout/sidebar.jsp" %>
 
 <h3>Liste des approvisionnements</h3>
 <a href="${pageContext.request.getContextPath()}/approvisionnement/ajouter.jsp">+ Nouvelle livraison</a><br><br>
@@ -20,20 +23,21 @@
         </tr>
     </thead>
     <tbody>
-       <% 
-        List<ApprovisionnementModel> listApp = (List<ApprovisionnementModel>) request.getAttribute("listApprovisionnement");
-        String erreur = (String)request.getAttribute("erreur");
-        
-        if(listApp != null && !listApp.isEmpty()){
-            for(ApprovisionnementModel app: listApp){
-           
-       %>
-       <tr>
+        <%           List<ApprovisionnementModel> listApp = (List<ApprovisionnementModel>) request.getAttribute("listApprovisionnement");
+            String erreur = (String) session.getAttribute("erreur");
+
+            if (listApp != null && !listApp.isEmpty()) {
+                for (ApprovisionnementModel app : listApp) {
+
+        %>
+
+
+        <tr>
             <td><%= app.getId()%></td>
-            <td><%= app.getStationId() %></td>
-            <td><%= app.getTypeCarburant() %></td>
-            <td><%= app.getQuantite() %></td>
-            <td><%= app.getDateLivraison() %> </td>
+            <td><%= app.getStationId()%></td>
+            <td><%= app.getTypeCarburant()%></td>
+            <td><%= app.getQuantite()%></td>
+            <td><%= app.getDateLivraison()%> </td>
             <td><%= app.getFournisseur()%> </td>
             <td>
                 <a href="ApprovisionnementServlet?action=edit&id=<%= app.getId()%>">Modifier</a> |
@@ -42,8 +46,8 @@
             </td>
         </tr>
         <% }
-        } else { %>
-        
+        } else {%>
+        <%= listApp%>
         <tr>
             <td colspan="9" style="text-align: center;">
                 <%= (erreur != null) ? erreur : "Aucune station trouvée."%>

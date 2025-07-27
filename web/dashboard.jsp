@@ -11,7 +11,7 @@
     <main class="p-6">
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="dashboard-card bg-white rounded-lg shadow p-6 transition duration-300">
+            <a href="${pageContext.request.contextPath}/ApprovisionnenmentServlet" class="dashboard-card bg-white rounded-lg shadow p-6 transition duration-300">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
                         <i class="fas fa-gas-pump text-xl"></i>
@@ -21,7 +21,7 @@
                         <h3 class="text-2xl font-bold">4</h3>
                     </div>
                 </div>
-            </div>
+            </a>
             <div class="dashboard-card bg-white rounded-lg shadow p-6 transition duration-300">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
