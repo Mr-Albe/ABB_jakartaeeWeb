@@ -18,9 +18,7 @@ import serviceImplement.StationDao;
 
 public class StationServlet extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(StationServlet.class.getName());
-
-    @Override
+     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
@@ -34,7 +32,6 @@ public class StationServlet extends HttpServlet {
                 load(request, response);
             }
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Erreur dans doGet", e);
             request.setAttribute("erreur", "Une erreur technique est survenue");
             load(request, response);
         }
@@ -58,12 +55,12 @@ public class StationServlet extends HttpServlet {
                 load(request, response);
             }
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Erreur dans doPost", e);
             request.setAttribute("erreur", "Erreur lors du traitement: " + e.getMessage());
-            request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
+            load(request, response);
         }
     }
 
+    // Methode pour charger les donnees depuis la base lors de la premiere apparution sur la page
     private void load(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         StationDao sdDao = null;
@@ -72,7 +69,6 @@ public class StationServlet extends HttpServlet {
             List<StationModel> listStation = sdDao.afficherTout();
             request.getSession().setAttribute("listStation", listStation);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Désolé! une Erreur lors du chargement des stations", e);
             request.getSession().setAttribute("erreur", "Erreur de chargement");
         }
         //request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
@@ -147,74 +143,82 @@ public class StationServlet extends HttpServlet {
             sdDao = new StationDao();
             boolean resultat = sdDao.ajouter(stModel);
 
+            // Verification si l'ajout fait avec succes
             if (!resultat) {
                 throw new SQLException("Échec de l'enregistrement dans la base de données");
             }
 
             session.setAttribute("success", "Enregistrement fait avec succès.");
             response.sendRedirect(request.getContextPath() + "/StationServlet");
-
-        } catch (NumberFormatException e) {
-            session.setAttribute("erreur", "Veuillez entrer des nombres valides pour les capacités et quantités");
-            conserverValeursFormulaire(request);
-            request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
-        } catch (IllegalArgumentException e) {
-            session.setAttribute("erreur", e.getMessage());
-            conserverValeursFormulaire(request);
-            request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Erreur lors de l'enregistrement", e);
-            session.setAttribute("erreur", "Erreur technique: " + e.getMessage());
-            conserverValeursFormulaire(request);
+        } //            catch (NumberFormatException e) {
+        //            session.setAttribute("erreur", "Veuillez entrer des nombres valides pour les capacités et quantités");
+        //            conserverValeursFormulaire(request);
+        //            request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
+        //        } catch (IllegalArgumentException e) {
+        //            session.setAttribute("erreur", e.getMessage());
+        //            conserverValeursFormulaire(request);
+        //            request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
+        catch (Exception e) {
+            request.setAttribute("erreur", getMessageErreurUtilisateur(e));
             request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
         }
     }
 
     private void modifierStationExistante(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        StationDao sdDao;
-        StationModel stModel = null;
         try {
-            int id = Integer.parseInt(request.getParameter("id"));
-
-            // on recupere un objet de StationModel de la methode lireEtvaliderStation(param)
+            // Validation et préparation des données
             StationModel stationForm = lireEtvaliderStation(request);
+            int id = Integer.parseInt(request.getParameter("id"));
+            stationForm.setId(id);
 
-            stModel = new StationModel();
-            stModel.setId(id);
-            stModel.setNumero(stationForm.getNumero());
-            stModel.setRue(stationForm.getRue());
-            stModel.setCommune(stationForm.getCommune());
-            stModel.setCapaciteGazoline(stationForm.getCapaciteGazoline());
-            stModel.setQuantiteGazoline(stationForm.getQuantiteGazoline());
-            stModel.setCapaciteDiesel(stationForm.getCapaciteDiesel());
-            stModel.setQuantiteDiesel(stationForm.getQuantiteDiesel());
+            // Appel au service
+            StationDao sdDao = new StationDao();
 
-            sdDao = new StationDao();
-            boolean resultat = sdDao.modifier(stModel);
+            boolean resultat = sdDao.modifier(stationForm);
 
             if (!resultat) {
-                request.setAttribute("erreur", "Échec de la mise à jour dans la base de données");
-                request.setAttribute("station", stModel);
-                request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
-                return;
+                throw new SQLException("Échec de la mise à jour dans la base de données");
             }
-
             response.sendRedirect(request.getContextPath() + "/StationServlet");
-            return;
 
-        } catch (IllegalArgumentException e) {
-            logger.log(Level.SEVERE, "Erreur lors de la modification", e);
-            request.setAttribute("erreur", e.getMessage());
-            request.setAttribute("station", stModel);
-            request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Erreur lors de la modification", e);
-            request.setAttribute("erreur", "Erreur lors de la modification: " + e.getMessage());
+            // Preparation de l'objet station pour reaffichage du formulaire
+            StationModel stationErreur = new StationModel(
+                    request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")) : 0,
+                    request.getParameter("numero"),
+                    request.getParameter("rue"),
+                    request.getParameter("commune"),
+                    request.getParameter("capaciteGazoline") != null ? Integer.parseInt(request.getParameter("capaciteGazoline")) : 0,
+                    request.getParameter("capaciteDiesel") != null ? Integer.parseInt(request.getParameter("capaciteDiesel")) : 0,
+                    request.getParameter("quantiteGazoline") != null ? Integer.parseInt(request.getParameter("quantiteGazoline")) : 0,
+                    request.getParameter("quantiteDiesel") != null ? Integer.parseInt(request.getParameter("quantiteDiesel")) : 0
+            );
+
+            request.setAttribute("station", stationErreur);
+            request.setAttribute("erreur", getMessageErreurUtilisateur(e));
+
+            // Forward vers la page de modification
             request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
         }
     }
 
+    // Gestion des messages d'exception
+    private String getMessageErreurUtilisateur(Exception e) {
+        if (e instanceof IllegalArgumentException) {
+            return e.getMessage();
+        } else if (e instanceof NumberFormatException) {
+            return "Veuillez entrer des nombres valides";
+        } else if (e instanceof SQLException) {
+            if (e.getMessage().contains("Duplicate entry")) {
+                return "Erreur: Numéro déjà attribué à une autre station";
+            }
+            return "Erreur de base de données: " + e.getMessage();
+        }
+        return "Une erreur technique est survenue";
+    }
+
+    // Methode  pour reaffichage du formulaire lors d'une modification
     private void afficherFormulaireEdition(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         StationDao sdDao = null;
@@ -231,12 +235,12 @@ public class StationServlet extends HttpServlet {
                 request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
             }
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Erreur lors de l'affichage du formulaire", e);
             request.getSession().setAttribute("erreur", "Erreur technique: " + e.getMessage());
-            request.getRequestDispatcher("/stations/index.jsp").forward(request, response);
+            request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
         }
     }
 
+    // Methode pour la suppression d'une station
     private void supprimerStation(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         StationDao sdDao = null;
@@ -253,11 +257,9 @@ public class StationServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/StationServlet");
             }
         } catch (SQLIntegrityConstraintViolationException e) {
-            logger.log(Level.SEVERE, "Erreur lors de la suppression", e);
             request.getSession().setAttribute("erreur", "Ouf! ce n'est pas de votre faute, cette station ne peut pas etre supprimee en raison de ces activites: ");
             load(request, response);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Erreur lors de la suppression", e);
             request.getSession().setAttribute("erreur", "Erreur lors de la suppression: " + e.getMessage());
             load(request, response);
         }
