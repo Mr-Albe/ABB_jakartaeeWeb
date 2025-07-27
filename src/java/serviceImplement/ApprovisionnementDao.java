@@ -14,19 +14,19 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
     @Override
     public boolean ajouter(ApprovisionnementModel app) throws ClassNotFoundException, SQLException {
         //
-        String insertSql = "INSERT INTO APPROVISIONNEMENT (id_station,type_carburant,quantite,date_livraison,id_fournisseur)  VALUES(?, ?, ?, ?, ?)";
+        String insertSql = "INSERT INTO APPROVISIONNEMENT (num_station,type_carburant,quantite,date_livraison,fournisseur)  VALUES(?, ?, ?, ?, ?)";
         String updateSql = "";
 
         if (app.getTypeCarburant().equalsIgnoreCase("diesel")) {
-            updateSql = "UPDATE STATION SET quantite_diesel = quantite_diesel + ? where id = ?";
+            updateSql = "UPDATE STATION SET quantite_diesel = quantite_diesel + ? where numero = ?";
         } else {
-            updateSql = "UPDATE STATION SET quantite_gazoline = quantite_gazoline + ? where id = ?";
+            updateSql = "UPDATE STATION SET quantite_gazoline = quantite_gazoline + ? where numero = ?";
         }
 
         try (Connection connect = DBConnection.getConnection(); PreparedStatement psdInsert = connect.prepareStatement(insertSql); PreparedStatement psdUdate = connect.prepareStatement(updateSql)) {
 
             connect.setAutoCommit(false);
-            psdInsert.setInt(1, app.getStationId());
+            psdInsert.setString(1, app.getNumStation());
             psdInsert.setString(2, app.getTypeCarburant());
             psdInsert.setInt(3, (int) app.getQuantite());
             psdInsert.setDate(4, Date.valueOf(app.getDateLivraison()));
@@ -34,7 +34,7 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
             psdInsert.executeUpdate();
 
             psdUdate.setInt(1, (int) app.getQuantite());
-            psdUdate.setInt(2, app.getStationId());
+            psdUdate.setString(2, app.getNumStation());
             psdUdate.executeUpdate();
 
             connect.commit();
@@ -55,8 +55,8 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
      */
     @Override
     public boolean modifier(ApprovisionnementModel app) throws ClassNotFoundException, SQLException {
-        String sqlGetOld = "SELECT quantite, type_carburant, id_station FROM APPROVISIONNEMENT WHERE id = ?";
-        String sqlUpdateApp = "UPDATE APPROVISIONNEMENT SET id_station =?, type_carburant =?, quantite =?, date_livraison =?, id_fournisseur = ? WHERE id = ?";
+        String sqlGetOld = "SELECT quantite, type_carburant, num_station FROM APPROVISIONNEMENT WHERE id = ?";
+        String sqlUpdateApp = "UPDATE APPROVISIONNEMENT SET num_station =?, type_carburant =?, quantite =?, date_livraison =?, id_fournisseur = ? WHERE id = ?";
         String sqlSubDiesel = "UPDATE STATION SET quantite_diesel = quantite_diesel - ? WHERE id = ?";
         String sqlSubGazo = "UPDATE STATION SET quantite_gazoline = quantite_gazoline - ? WHERE id = ?";
         String sqlAddDiesel = "UPDATE STATION SET quantite_diesel = quantite_diesel + ? WHERE id = ?";
@@ -68,14 +68,14 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
             // 1. Récupérer l'ancienne livraison
             int ancienneQuantite = 0;
             String ancienType = "";
-            int ancienStationId = 0;
+            String ancienNumStation = null;
             try (PreparedStatement psOld = connect.prepareStatement(sqlGetOld)) {
                 psOld.setInt(1, app.getId());
                 try (ResultSet rs = psOld.executeQuery()) {
                     if (rs.next()) {
                         ancienneQuantite = rs.getInt("quantite");
                         ancienType = rs.getString("type_carburant");
-                        ancienStationId = rs.getInt("id_station");
+                        ancienNumStation = rs.getString("num_station");
                     }
                 }
             }
@@ -84,20 +84,20 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
             if (ancienType.equalsIgnoreCase("diesel")) {
                 try (PreparedStatement ps = connect.prepareStatement(sqlSubDiesel)) {
                     ps.setInt(1, ancienneQuantite);
-                    ps.setInt(2, ancienStationId);
+                    ps.setString(2, ancienNumStation);
                     ps.executeUpdate();
                 }
             } else {
                 try (PreparedStatement ps = connect.prepareStatement(sqlSubGazo)) {
                     ps.setInt(1, ancienneQuantite);
-                    ps.setInt(2, ancienStationId);
+                    ps.setString(2, ancienNumStation);
                     ps.executeUpdate();
                 }
             }
 
             // 3. Mettre à jour l'approvisionnement
             try (PreparedStatement ps = connect.prepareStatement(sqlUpdateApp)) {
-                ps.setInt(1, app.getStationId());
+                ps.setString(1, app.getNumStation());
                 ps.setString(2, app.getTypeCarburant());
                 ps.setInt(3, app.getQuantite());
                 ps.setDate(4, Date.valueOf(app.getDateLivraison()));
@@ -110,13 +110,13 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
             if (app.getTypeCarburant().equalsIgnoreCase("diesel")) {
                 try (PreparedStatement ps = connect.prepareStatement(sqlAddDiesel)) {
                     ps.setInt(1, app.getQuantite());
-                    ps.setInt(2, app.getStationId());
+                    ps.setString(2, app.getNumStation());
                     ps.executeUpdate();
                 }
             } else {
                 try (PreparedStatement ps = connect.prepareStatement(sqlAddGazo)) {
                     ps.setInt(1, app.getQuantite());
-                    ps.setInt(2, app.getStationId());
+                    ps.setString(2, app.getNumStation());
                     ps.executeUpdate();
                 }
             }
@@ -153,7 +153,7 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
             try (ResultSet rss = pds.executeQuery()) {
                 if (rss.next()) {
                     appModel.setId(rss.getInt("id"));
-                    appModel.setStationId(rss.getInt("id_station"));
+                    appModel.setNumStation(rss.getString("num_station"));
                     appModel.setTypeCarburant(rss.getString("type_carburant"));
                     appModel.setQuantite(rss.getInt("quantite"));
                     Date appDate = rss.getDate("date_livraison");
@@ -189,7 +189,7 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
             while (rs.next()) {
                 appModel = new ApprovisionnementModel();
                 appModel.setId(rs.getInt("id"));
-                appModel.setStationId(rs.getInt("id_station"));
+                appModel.setNumStation(rs.getString("num_station"));
                 appModel.setTypeCarburant(rs.getString("type_carburant"));
                 appModel.setQuantite(rs.getInt("quantite"));
                 Date sqlDate = rs.getDate("date_livraison");

@@ -42,10 +42,10 @@
     <input name="id" type="hidden" value="<%= isEdit ? appModel.getId() : "" %>">
     
     <div class="form-group"> 
-        <label> ID Station :</label>
+        <label> Numero Station :</label>
         <select name="stationId">
             <%for (StationModel st : StationList) {%>  
-            <option value="<%= isEdit ? appModel.getStationId() : st.getId() %>"><%= st.getId()%></option>
+            <option value="<%= isEdit ? appModel.getNumStation(): st.getNumero()%>"><%= isEdit ? appModel.getNumStation(): st.getNumero()%></option>
             <%} %>
         </select>
     </div>
@@ -60,8 +60,7 @@
 
     <div class="form-group"> 
         <label>Quantité :</label>
-        <input type="number" name="quantite" min="1" 
-               value="<%= isEdit ? appModel.getQuantite() : 0 %>" required >
+        <input type="number" name="quantite" min="1"  value="<%= isEdit ? appModel.getQuantite() : 0 %>" required >
     </div>
 
     <div class="form-group"> 

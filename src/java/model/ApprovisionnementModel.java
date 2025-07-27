@@ -5,7 +5,7 @@ import java.time.LocalDate;
 
 public class ApprovisionnementModel {
     private int id;
-    private int stationId;
+    private String numStation;
     private String typeCarburant;
     private int quantite;
     private LocalDate dateLivraison;
@@ -16,9 +16,9 @@ public class ApprovisionnementModel {
     public ApprovisionnementModel() {
     }
     
-    public ApprovisionnementModel(int id, int stationId, String typeCarburant, int quantite, LocalDate dateLivraison, String fournisseur) {
+    public ApprovisionnementModel(int id, String numStation, String typeCarburant, int quantite, LocalDate dateLivraison, String fournisseur) {
         this.id = id;
-        this.stationId = stationId;
+        this.numStation = numStation;
         this.typeCarburant = typeCarburant;
         this.quantite = quantite;
         this.dateLivraison = dateLivraison;
@@ -32,12 +32,12 @@ public class ApprovisionnementModel {
         this.id = id;
     }
 
-    public int getStationId() {
-        return stationId;
+    public String getNumStation() {
+        return numStation;
     }
 
-    public void setStationId(int stationId) {
-        this.stationId = stationId;
+    public void setNumStation(String numStation) {
+        this.numStation = numStation;
     }
 
     public String getTypeCarburant() {

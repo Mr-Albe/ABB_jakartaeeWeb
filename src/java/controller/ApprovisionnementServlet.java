@@ -4,6 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -75,7 +76,7 @@ public class ApprovisionnementServlet extends HttpServlet {
             request.getRequestDispatcher("/approvisionnement/index.jsp").forward(request, response);
         } catch (ClassNotFoundException | SQLException ex) {
             // En cas d'erreur, transmettre un message d'erreur a la JSP
-            request.setAttribute("erreur", "Erreur de connexion à la base de données : "+ex);
+            request.setAttribute("erreur", "Erreur de connexion à la base de données : " + ex);
             request.getRequestDispatcher("/approvisionnement/index.jsp").forward(request, response);
         }
 
@@ -97,18 +98,18 @@ public class ApprovisionnementServlet extends HttpServlet {
             if (id > 0) {
                 approvisionnement = new ApprovisionnementModel();
                 approvisionnement.setId(id);
-                approvisionnement.setStationId(Integer.parseInt(request.getParameter("stationId")));
+                approvisionnement.setNumStation(request.getParameter("stationId"));
                 approvisionnement.setTypeCarburant(request.getParameter("type"));
                 approvisionnement.setQuantite(Integer.parseInt(request.getParameter("quantite")));
                 approvisionnement.setDateLivraison(LocalDate.parse(request.getParameter("dateLivraison")));
                 approvisionnement.setFournisseur(request.getParameter("fournisseur"));
                 // Vérification de la capacité
-                int stationId = approvisionnement.getStationId();
+                String stationId = approvisionnement.getNumStation();
                 int quantite = approvisionnement.getQuantite();
                 String type = request.getParameter("type");
 
                 stationDao = new StationDao();
-                int capacite = stationDao.getCapaciteParStationIdType(stationId,type);
+                int capacite = stationDao.getCapaciteParStationIdType(stationId, type);
 
                 if (quantite > capacite) {
                     request.setAttribute("erreur", "La quantité ne doit pas dépasser la capacité maximale de la station (" + capacite + " gallons).");
@@ -138,26 +139,27 @@ public class ApprovisionnementServlet extends HttpServlet {
         String dateStr = request.getParameter("dateLivraison");
         String fournisseur = request.getParameter("fournisseur");
         String stationIdStr = request.getParameter("stationId");
+        
+        HttpSession session = request.getSession();
 
         //Validation simple des paramètres
         if (typeCarburant == null || quantiteStr == null || dateStr == null || fournisseur == null || stationIdStr == null
                 || typeCarburant.isEmpty() || quantiteStr.isEmpty() || dateStr.isEmpty() || fournisseur.isEmpty() || stationIdStr.isEmpty()) {
-            request.setAttribute("error", "Tous les champs sont obligatoires.");
+            session.setAttribute("error", "Tous les champs sont obligatoires.");
             showForm(request, response);
             return;
         }
 
         try {
             int quantite = Integer.parseInt(quantiteStr);
-            int stationId = Integer.parseInt(stationIdStr);
             LocalDate dateLivraison;
             dateLivraison = LocalDate.parse(dateStr);
 
             // Récupérer la station
             stationDao = new StationDao();
-            station = stationDao.rechercherParId(stationId);
+            station = stationDao.rechercherParNumero(stationIdStr);
             if (station == null) {
-                request.setAttribute("error", "Station introuvable.");
+                session.setAttribute("error", "Station introuvable.");
                 showForm(request, response);
                 return;
             }
@@ -172,21 +174,21 @@ public class ApprovisionnementServlet extends HttpServlet {
                 capaciteMax = station.getCapaciteDiesel();
                 quantiteActuelle = station.getQuantiteDiesel();
             } else {
-                request.setAttribute("error", "Type de carburant invalide.");
+                session.setAttribute("error", "Type de carburant invalide.");
                 showForm(request, response);
                 return;
             }
 
             int quantiteLibre = capaciteMax - quantiteActuelle;
             if (quantite > quantiteLibre) {
-                request.setAttribute("error", "La quantité livrée dépasse la capacité restante du réservoir (" + quantiteLibre + " L disponibles).");
+                session.setAttribute("error", "La quantité livrée dépasse la capacité restante du réservoir (" + quantiteLibre + " L disponibles).");
                 showForm(request, response);
                 return;
             }
 
             // Enregistrer l'approvisionnement
             approvisionnement = new ApprovisionnementModel();
-            approvisionnement.setStationId(stationId);
+            approvisionnement.setNumStation(stationIdStr);
             approvisionnement.setTypeCarburant(typeCarburant);
             approvisionnement.setQuantite(quantite);
             approvisionnement.setDateLivraison(dateLivraison);
@@ -196,7 +198,7 @@ public class ApprovisionnementServlet extends HttpServlet {
             boolean ajoutOk = approDao.ajouter(approvisionnement);
 
             if (!ajoutOk) {
-                request.setAttribute("error", "Erreur lors de l'enregistrement de la livraison.");
+                session.setAttribute("error", "Erreur lors de l'enregistrement de la livraison.");
                 showForm(request, response);
                 return;
             }
@@ -210,7 +212,7 @@ public class ApprovisionnementServlet extends HttpServlet {
             boolean majOk = stationDao.modifier(station);
 
             if (!majOk) {
-                request.setAttribute("error", "Erreur lors de la mise à jour du stock.");
+                session.setAttribute("error", "Erreur lors de la mise à jour du stock.");
                 showForm(request, response);
                 return;
             }
@@ -219,17 +221,17 @@ public class ApprovisionnementServlet extends HttpServlet {
             response.sendRedirect("ApprovisionnementServlet");
 
         } catch (NumberFormatException | SQLException | ClassNotFoundException e) {
-            request.setAttribute("error", "Erreur : " + e.getMessage());
+            session.setAttribute("error", "Erreur : " + e.getMessage());
             showForm(request, response);
         } catch (DateTimeParseException e) {
-            request.setAttribute("error", "Date invalide.");
+            session.setAttribute("error", "Date invalide.");
             showForm(request, response);
         }
     }
 
     private void showForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("approvisionnement/enregistrement.jsp").forward(request, response);
+        request.getRequestDispatcher("approvisionnement/ajouter.jsp").forward(request, response);
     }
 
     private void afficherFormulaireEdition(HttpServletRequest request, HttpServletResponse response)

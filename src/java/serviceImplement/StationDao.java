@@ -136,6 +136,40 @@ public class StationDao implements IdaO<StationModel> {
         return stModel;
     }
 
+    
+    public StationModel rechercherParNumero(String numero) throws ClassNotFoundException, SQLException {
+        String sql = "SELECT * FROM station WHERE numero = ?";
+        StationModel stModel = null;
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBConnection.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, numero);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                stModel = new StationModel();
+                stModel.setId(rs.getInt("id"));
+                stModel.setNumero(rs.getString("numero"));
+                stModel.setRue(rs.getString("rue"));
+                stModel.setCommune(rs.getString("commune"));
+                stModel.setCapaciteGazoline(rs.getInt("capacite_gazoline"));
+                stModel.setQuantiteGazoline(rs.getInt("quantite_gazoline"));
+                stModel.setCapaciteDiesel(rs.getInt("capacite_diesel"));
+                stModel.setQuantiteDiesel(rs.getInt("quantite_diesel"));
+            }
+        } finally {
+            closeResources(conn, ps, rs);
+        }
+
+        return stModel;
+    }
+    
+    
     @Override
     public List<StationModel> afficherTout() throws ClassNotFoundException, SQLException {
         List<StationModel> listStation = new ArrayList<>();
@@ -169,7 +203,7 @@ public class StationDao implements IdaO<StationModel> {
         return listStation;
     }
 
-    public int getCapaciteParStationIdType(int stationId, String typeCarburant) throws SQLException, ClassNotFoundException {
+    public int getCapaciteParStationIdType(String num_tation, String typeCarburant) throws SQLException, ClassNotFoundException {
         String sql = "SELECT capacite_gazoline, capacite_diesel FROM station WHERE id = ?";
 
         Connection conn = null;
@@ -179,7 +213,7 @@ public class StationDao implements IdaO<StationModel> {
         try {
             conn = DBConnection.getConnection();
             ps = conn.prepareStatement(sql);
-            ps.setInt(1, stationId);
+            ps.setString(1, num_tation);
             rs = ps.executeQuery();
 
             if (rs.next()) {
@@ -191,7 +225,7 @@ public class StationDao implements IdaO<StationModel> {
                     throw new IllegalArgumentException("Type de carburant invalide : " + typeCarburant);
                 }
             } else {
-                throw new SQLException("Station introuvable avec ID : " + stationId);
+                throw new SQLException("Station introuvable avec NUMERO : " + num_tation);
             }
         } finally {
             closeResources(conn, ps, rs);

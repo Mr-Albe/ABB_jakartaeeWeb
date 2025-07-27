@@ -148,8 +148,8 @@
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Adresse</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gazoline</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Diesel</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gazoline(Gl)</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Diesel(Gl)</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
@@ -177,7 +177,7 @@
                                 <div class="flex items-center gap-4">
                                     <div class="w-24">
                                         <div class="text-sm text-gray-500 mb-1">
-                                            <%= st.getQuantiteGazoline()%>/<%= st.getCapaciteGazoline()%> L
+                                            <%= st.getQuantiteGazoline()%>/<%= st.getCapaciteGazoline()%> Gl
                                         </div>
                                         <div class="progress-bar">
                                             <div class="progress-fill <%= gazolineBarColor%>" 
@@ -193,7 +193,7 @@
                                 <div class="flex items-center gap-4">
                                     <div class="w-24">
                                         <div class="text-sm text-gray-500 mb-1">
-                                            <%= st.getQuantiteDiesel()%>/<%= st.getCapaciteDiesel()%> L
+                                            <%= st.getQuantiteDiesel()%>/<%= st.getCapaciteDiesel()%> Gl
                                         </div>
                                         <div class="progress-bar">
                                             <div class="progress-fill <%= dieselBarColor%>" 
