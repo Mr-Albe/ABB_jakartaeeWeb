@@ -74,8 +74,7 @@
                         <i class="fas fa-chevron-right dropdown-icon text-xs"></i>
                     </button>
                     <div class="dropdown-container">
-                        <a href="#" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Gestion des utilisateurs</a>
-                        <a href="#" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Rôles & permissions</a>
+                        <a href="${pageContext.request.contextPath}/User" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Liste des utilisateurs</a>
                     </div>
                 </div>
             </div>
