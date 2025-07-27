@@ -20,7 +20,13 @@
 %>
 <!-- Main Content -->
 <div class="content flex-grow overflow-auto">
-    <%@include file="/layout/topNavigation.jsp" %>
+    <header class="bg-white shadow-sm p-4 flex items-center">
+        <button id="mobileToggle" class="mr-4 text-gray-600 md:hidden">
+            <i class="fas fa-bars"></i>
+        </button>
+        <h1 class="text-xl font-bold text-gray-800">Tableau de bord</h1>
+
+    </header>
     <!-- Dashboard Content -->
     <main class="p-6">
         <!-- Stats Cards -->
