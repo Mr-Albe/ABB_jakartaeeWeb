@@ -11,9 +11,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import model.ApprovisionnementModel;
+import model.StationModel;
 import model.UserModel;
+import model.VenteModel;
+import serviceImplement.ApprovisionnementDao;
+import serviceImplement.StationDao;
 import serviceImplement.UserDao;
-
+import serviceImplement.VenteDao;
 
 public class LoginServlet extends HttpServlet {
 
@@ -44,7 +51,7 @@ public class LoginServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
 
         String username = request.getParameter("username");
         String password = request.getParameter("password");
@@ -52,11 +59,34 @@ public class LoginServlet extends HttpServlet {
         try {
             userDao = new UserDao();
             UserModel user = userDao.rechercherParUsernameEtPassword(username, password);
-            
+
             if (user != null) {
                 HttpSession session = request.getSession();
                 session.setAttribute("user", user);
                 System.out.println("Utilisateur connecté : " + user.getUsername());
+
+                //Donnees des statistiques
+                //Liste des stations
+                StationDao sdDao = new StationDao();
+                List<StationModel> listStation = sdDao.afficherTout();
+                request.getSession().setAttribute("listeStation", listStation);
+
+                //Liste des appro...
+                ApprovisionnementDao approDao = new ApprovisionnementDao();
+                List<ApprovisionnementModel> listeAppro = approDao.afficherTout();
+                request.getSession().setAttribute("listeAppro", listeAppro);
+
+                //Liste des ventes
+                VenteDao venteDao = new VenteDao();
+                List<VenteModel> listeVente = venteDao.afficherTout();
+                request.getSession().setAttribute("listeVente", listeVente);
+
+                //Calculer le revenu
+                Double totalRevenu = 0.0;
+                for(VenteModel vente : listeVente){
+                    totalRevenu += vente.getRevenu();
+                }
+                request.getSession().setAttribute("totalRevenu", totalRevenu);
                 response.sendRedirect("dashboard.jsp");
             } else {
                 request.setAttribute("errorLogin", "Nom d'utilisateur ou mot de passe incorrect.");

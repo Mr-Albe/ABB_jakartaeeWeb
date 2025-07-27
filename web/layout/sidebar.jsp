@@ -16,7 +16,7 @@
                 <p class="text-blue-200 uppercase text-xs font-bold mb-2 nav-text">Menu Principal</p>
 
                 <!-- Tableau de bord -->
-                <a href="${pageContext.request.contextPath}/dashboard.jsp" class="nav-item flex items-center py-2 px-3 rounded hover:bg-blue-700 mb-1 active">
+                <a href="${pageContext.request.contextPath}/Dashboard" class="nav-item flex items-center py-2 px-3 rounded hover:bg-blue-700 mb-1 active">
                     <i class="fas fa-tachometer-alt mr-3"></i>
                     <span class="nav-text">Tableau de bord</span>
                 </a>
