@@ -8,7 +8,7 @@
     }
     
     String error = (String) request.getAttribute("erreur");
-    boolean isEdit = station != null;
+    boolean isEdit = station.getId() != 0;
 %>
 
 <div class="max-w-4xl mx-auto px-4 py-8">
@@ -31,7 +31,7 @@
         <% } %>
 
         <form method="post" action="<%= request.getContextPath() %>/StationServlet" class="space-y-6">
-            <input type="hidden" name="action" value="<%= isEdit ? "edit" : "add" %>">
+            <input type="hidden" name="action" value="edit">
             
             <% if (isEdit) { %>
                 <input type="hidden" name="id" value="<%= station.getId()%>">
@@ -42,8 +42,8 @@
                 <div class="space-y-4">
                     <div>
                         <label for="numero" class="block text-sm font-medium text-gray-700 mb-1">Numéro</label>
-                        <input type="hidden" id="numero" name="numero" 
-                               value="<%= isEdit ? station.getNumero() : "" %>"
+                        <input type="text" id="numero" name="numero" 
+                               value="<%= station.getNumero() != null ? station.getNumero() : "" %>"
                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                required>
                     </div>
@@ -51,7 +51,7 @@
                     <div>
                         <label for="rue" class="block text-sm font-medium text-gray-700 mb-1">Rue</label>
                         <input type="text" id="rue" name="rue" 
-                               value="<%= isEdit ? station.getRue() : "" %>"
+                               value="<%= station.getRue() != null ? station.getRue() : "" %>"
                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                required>
                     </div>
@@ -59,7 +59,7 @@
                     <div>
                         <label for="commune" class="block text-sm font-medium text-gray-700 mb-1">Commune</label>
                         <input type="text" id="commune" name="commune" 
-                               value="<%= isEdit ? station.getCommune() : "" %>"
+                               value="<%= station.getCommune() != null ? station.getCommune() : "" %>"
                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                required>
                     </div>
@@ -70,7 +70,7 @@
                     <div>
                         <label for="capaciteGazoline" class="block text-sm font-medium text-gray-700 mb-1">Capacité Gazoline</label>
                         <input type="number" id="capaciteGazoline" name="capaciteGazoline" min="1"
-                               value="<%= isEdit ? station.getCapaciteGazoline() : "" %>"
+                               value="<%= station.getCapaciteGazoline() > 0 ? station.getCapaciteGazoline() : "" %>"
                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                required>
                     </div>
@@ -78,7 +78,7 @@
                     <div>
                         <label for="quantiteGazoline" class="block text-sm font-medium text-gray-700 mb-1">Quantité Gazoline</label>
                         <input type="number" id="quantiteGazoline" name="quantiteGazoline" min="0"
-                               value="<%= isEdit ? station.getQuantiteGazoline() : "" %>"
+                               value="<%= station.getQuantiteGazoline() > 0 ? station.getQuantiteGazoline() : "" %>"
                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                required>
                     </div>
@@ -86,7 +86,7 @@
                     <div>
                         <label for="capaciteDiesel" class="block text-sm font-medium text-gray-700 mb-1">Capacité Diesel</label>
                         <input type="number" id="capaciteDiesel" name="capaciteDiesel" min="1"
-                               value="<%= isEdit ? station.getCapaciteDiesel() : "" %>"
+                               value="<%= station.getCapaciteDiesel() > 0 ? station.getCapaciteDiesel() : "" %>"
                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                required>
                     </div>
@@ -94,7 +94,7 @@
                     <div>
                         <label for="quantiteDiesel" class="block text-sm font-medium text-gray-700 mb-1">Quantité Diesel</label>
                         <input type="number" id="quantiteDiesel" name="quantiteDiesel" min="0"
-                               value="<%= isEdit ? station.getQuantiteDiesel() : "" %>"
+                               value="<%= station.getQuantiteDiesel() > 0 ? station.getQuantiteDiesel() : "" %>"
                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                required>
                     </div>
@@ -112,28 +112,5 @@
         </form>
     </div>
 </div>
-
-<script>
-    document.querySelector('form').addEventListener('submit', function(e) {
-        const capGaz = parseInt(document.getElementById('capaciteGazoline').value);
-        const qteGaz = parseInt(document.getElementById('quantiteGazoline').value);
-        const capDie = parseInt(document.getElementById('capaciteDiesel').value);
-        const qteDie = parseInt(document.getElementById('quantiteDiesel').value);
-        
-        if (qteGaz > capGaz) {
-            alert('La quantité Gazoline ne peut pas dépasser la capacité');
-            e.preventDefault();
-            return false;
-        }
-        
-        if (qteDie > capDie) {
-            alert('La quantité Diesel ne peut pas dépasser la capacité');
-            e.preventDefault();
-            return false;
-        }
-        
-        return true;
-    });
-</script>
 
 <%@ include file="/layout/footer.jsp" %>
