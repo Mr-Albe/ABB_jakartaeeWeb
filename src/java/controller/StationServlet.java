@@ -60,7 +60,7 @@ public class StationServlet extends HttpServlet {
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Erreur dans doPost", e);
             request.setAttribute("erreur", "Erreur lors du traitement: " + e.getMessage());
-            request.getRequestDispatcher("/stations/ajouter.jsp").forward(request, response);
+            request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
         }
     }
 
@@ -157,16 +157,16 @@ public class StationServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             session.setAttribute("erreur", "Veuillez entrer des nombres valides pour les capacités et quantités");
             conserverValeursFormulaire(request);
-            request.getRequestDispatcher("/stations/ajouter.jsp").forward(request, response);
+            request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
         } catch (IllegalArgumentException e) {
             session.setAttribute("erreur", e.getMessage());
             conserverValeursFormulaire(request);
-            request.getRequestDispatcher("/stations/ajouter.jsp").forward(request, response);
+            request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Erreur lors de l'enregistrement", e);
             session.setAttribute("erreur", "Erreur technique: " + e.getMessage());
             conserverValeursFormulaire(request);
-            request.getRequestDispatcher("/stations/ajouter.jsp").forward(request, response);
+            request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
         }
     }
 
@@ -196,7 +196,7 @@ public class StationServlet extends HttpServlet {
             if (!resultat) {
                 request.setAttribute("erreur", "Échec de la mise à jour dans la base de données");
                 request.setAttribute("station", stModel);
-                request.getRequestDispatcher("/stations/modifier.jsp").forward(request, response);
+                request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
                 return;
             }
 
@@ -207,11 +207,11 @@ public class StationServlet extends HttpServlet {
             logger.log(Level.SEVERE, "Erreur lors de la modification", e);
             request.setAttribute("erreur", e.getMessage());
             request.setAttribute("station", stModel);
-            request.getRequestDispatcher("/stations/modifier.jsp").forward(request, response);
+            request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Erreur lors de la modification", e);
             request.setAttribute("erreur", "Erreur lors de la modification: " + e.getMessage());
-            request.getRequestDispatcher("/stations/modifier.jsp").forward(request, response);
+            request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
         }
     }
 
@@ -225,7 +225,7 @@ public class StationServlet extends HttpServlet {
 
             if (st != null) {
                 request.setAttribute("station", st);
-                request.getRequestDispatcher("/stations/modifier.jsp").forward(request, response);
+                request.getRequestDispatcher("/stations/add_edit.jsp").forward(request, response);
             } else {
                 request.getSession().setAttribute("erreur", "Station introuvable.");
                 request.getRequestDispatcher("/stations/index.jsp").forward(request, response);

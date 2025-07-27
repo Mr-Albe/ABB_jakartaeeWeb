@@ -30,7 +30,7 @@
                     </button>
                     <div class="dropdown-container">
                         <a href="${pageContext.request.contextPath}/StationServlet" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Liste des stations</a>
-                        <a href="${pageContext.request.contextPath}/stations/ajouter.jsp" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Ajouter une station</a>
+                        <a href="${pageContext.request.contextPath}/stations/add_edit.jsp" class="block py-2 px-3 pl-8 rounded hover:bg-blue-700 text-sm">Ajouter une station</a>
                     </div>
                 </div>
 
