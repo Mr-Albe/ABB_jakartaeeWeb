@@ -11,10 +11,10 @@ public class VenteDao implements IdaO<VenteModel> {
 
     @Override
     public boolean ajouter(VenteModel vente) throws ClassNotFoundException, SQLException {
-        String sqlInsert = "INSERT INTO vente(id_station, type_carburant, quantite, prix_vente, date_vente, revenu) VALUES (?, ?, ?, ?, ?, ?)";
+        String sqlInsert = "INSERT INTO vente(num_station, type_carburant, quantite, prix_vente, date_vente, revenu) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
             PreparedStatement pdS = conn.prepareStatement(sqlInsert)) {
-            pdS.setInt(1, vente.getStationId());
+            pdS.setString(1, vente.getNumStation());
             pdS.setString(2, vente.getTypeCarburant());
             pdS.setInt(3, vente.getQuantite());
             pdS.setDouble(4, vente.getPrixUnitaire());
@@ -27,31 +27,12 @@ public class VenteDao implements IdaO<VenteModel> {
 
     @Override
     public boolean modifier(VenteModel vente) throws ClassNotFoundException, SQLException {
-        String sqlUpdate = "UPDATE vente SET id_station=?, type_carburant=?, quantite=?, prix_vente=?, date_vente=?, revenu=? WHERE id=?";
-        try (Connection conn = DBConnection.getConnection();
-            PreparedStatement pdS = conn.prepareStatement(sqlUpdate)) {
-            pdS.setInt(1, vente.getStationId());
-            pdS.setString(2, vente.getTypeCarburant());
-            pdS.setInt(3, vente.getQuantite());
-            pdS.setDouble(4, vente.getPrixUnitaire());
-            Date dateVente = Date.valueOf(vente.getDateVente());
-            pdS.setDate(5, dateVente);
-            pdS.setDate(5, dateVente);
-            pdS.setDouble(6, vente.getRevenu());
-            pdS.setInt(7, vente.getId());
-
-            return pdS.executeUpdate() > 0;
-        }
+        return true;
     }
 
     @Override
     public boolean supprimer(int id) throws ClassNotFoundException, SQLException {
-        String sqlDelete = "DELETE FROM vente WHERE id=?";
-        try (Connection conn = DBConnection.getConnection();
-            PreparedStatement pdS = conn.prepareStatement(sqlDelete)) {
-            pdS.setInt(1, id);
-            return pdS.executeUpdate() > 0;
-        }
+        return true;
     }
 
     @Override
@@ -64,7 +45,7 @@ public class VenteDao implements IdaO<VenteModel> {
                 if (rs.next()) {
                     VenteModel vente = new VenteModel();
                     vente.setId(rs.getInt("id"));
-                    vente.setStationId(rs.getInt("id_station"));
+                    vente.setNumStation(rs.getString("num_station"));
                     vente.setTypeCarburant(rs.getString("type_carburant"));
                     vente.setQuantite(rs.getInt("quantite"));
                     vente.setPrixUnitaire(rs.getDouble("prix_vente"));
@@ -86,7 +67,7 @@ public class VenteDao implements IdaO<VenteModel> {
             while (rs.next()) {
                 VenteModel vente = new VenteModel();
                 vente.setId(rs.getInt("id"));
-                vente.setStationId(rs.getInt("id_station"));
+                vente.setNumStation(rs.getString("num_station"));
                 vente.setTypeCarburant(rs.getString("type_carburant"));
                 vente.setQuantite(rs.getInt("quantite"));
                 vente.setPrixUnitaire(rs.getDouble("prix_vente"));
