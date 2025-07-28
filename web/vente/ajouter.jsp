@@ -16,7 +16,8 @@
     if (vente == null) {
         vente = new VenteModel();
     }
-    boolean isvente = vente.getId() > 0;
+    
+    boolean isvente = vente.getQuantite() > 0;
 
     String error = null;
     if (session.getAttribute("erreur") != null) {
