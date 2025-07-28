@@ -8,7 +8,7 @@
     <style>
         body {
             background: linear-gradient(rgba(30, 58, 138, 0.85), rgba(30, 58, 138, 0.85)), 
-                        url('https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+                        url('<%= request.getContextPath() %>/assets/background.png') no-repeat center center fixed;
             background-size: cover;
             background-attachment: fixed;
         }
