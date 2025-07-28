@@ -187,7 +187,7 @@
                                      alt="Bendy SERVILUS"
                                      class="w-full h-full object-cover rounded-full"/>
                             </div>
-                            <h3 class="text-xl font-bold mb-2">Bendy SERVILUS</h3>
+                            <h3 class="text-xl font-bold mb-2">Albikendy JEAN</h3>
                             <p class="text-secondary font-medium mb-2">Développeur</p>
                             <p class="text-gray-600">Spécialiste Java EE</p>
                             <div class="mt-4 flex justify-center space-x-4">
@@ -213,7 +213,7 @@
                             <p class="text-secondary font-medium mb-2">Développeur</p>
                             <p class="text-gray-600">Spécialiste Java EE</p>
                             <div class="mt-4 flex justify-center space-x-4">
-                                <a href="#" class="text-blue-500 hover:text-blue-700">
+                                <a href="https://github.com/bendy2509" class="text-blue-500 hover:text-blue-700">
                                     <i class="fab fa-github"></i>
                                 </a>
                                 <a href="#" class="text-blue-500 hover:text-blue-700">
@@ -232,7 +232,7 @@
                                      alt="Bendy SERVILUS"
                                      class="w-full h-full object-cover rounded-full"/>
                             </div>
-                            <h3 class="text-xl font-bold mb-2">Bendy SERVILUS</h3>
+                            <h3 class="text-xl font-bold mb-2">Blemy JOSEPH</h3>
                             <p class="text-secondary font-medium mb-2">Développeur</p>
                             <p class="text-gray-600">Spécialiste Java EE</p>
                             <div class="mt-4 flex justify-center space-x-4">
