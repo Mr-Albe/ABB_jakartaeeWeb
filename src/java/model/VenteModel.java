@@ -7,7 +7,7 @@ import java.time.LocalDate;
  */
 public class VenteModel {
     private int id;
-    private int stationId;
+    private String numStationId;
     private String typeCarburant; 
     private int quantite;
     private double prixUnitaire;
@@ -19,9 +19,9 @@ public class VenteModel {
     }
     
     // Constructeur 
-    public VenteModel(int id, int stationId, String typeCarburant, int quantite, double prixUnitaire, LocalDate dateVente) {
+    public VenteModel(int id, String numStationId, String typeCarburant, int quantite, double prixUnitaire, LocalDate dateVente) {
         this.id = id;
-        this.stationId = stationId;
+        this.numStationId = numStationId;
         this.typeCarburant = typeCarburant;
         this.quantite = quantite;
         this.prixUnitaire = prixUnitaire;
@@ -37,12 +37,12 @@ public class VenteModel {
         this.id = id;
     }
 
-    public int getStationId() {
-        return stationId;
+    public String getNumStation() {
+        return numStationId;
     }
 
-    public void setStationId(int stationId) {
-        this.stationId = stationId;
+    public void setNumStation(String numStationId) {
+        this.numStationId = numStationId;
     }
 
     public String getTypeCarburant() {

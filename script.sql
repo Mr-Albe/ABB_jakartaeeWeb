@@ -20,8 +20,8 @@ CREATE TABLE station (
 );
 
 -- Table approvisionnement
-CREATE TABLE approvisionnement (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE approvisionnement ( 
+   id INT AUTO_INCREMENT PRIMARY KEY,
     num_station VARCHAR(10) NOT NULL,
     type_carburant ENUM('gazoline', 'diesel'),
     quantite INT,
@@ -30,16 +30,17 @@ CREATE TABLE approvisionnement (
     FOREIGN KEY (num_station) REFERENCES station(numero)
 );
 
+
 -- Table vente
 CREATE TABLE vente (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    id_station INT NOT NULL,
+    num_station VARCHAR(10) NOT NULL,
     type_carburant ENUM('gazoline', 'diesel'),
     quantite INT,
     prix_vente DECIMAL(10,2),
     date_vente DATE,
     revenu DECIMAL(10,2),
-    FOREIGN KEY (id_station) REFERENCES station(id)
+    FOREIGN KEY (num_station) REFERENCES station(numero)
 );
 
 -- Table users

@@ -95,9 +95,9 @@ public class StationDao implements IdaO<StationModel> {
     }
 
     @Override
-    public boolean supprimer(int id) throws SQLException, ClassNotFoundException,SQLIntegrityConstraintViolationException {
+    public boolean supprimer(int id) throws SQLException, ClassNotFoundException, SQLIntegrityConstraintViolationException {
         String sql = "DELETE FROM STATION WHERE id = ?";
-        try(Connection connect = DBConnection.getConnection(); PreparedStatement pds = connect.prepareStatement(sql)) {
+        try (Connection connect = DBConnection.getConnection(); PreparedStatement pds = connect.prepareStatement(sql)) {
             pds.setInt(1, id);
             return pds.executeUpdate() > 0;
         }
@@ -136,7 +136,6 @@ public class StationDao implements IdaO<StationModel> {
         return stModel;
     }
 
-    
     public StationModel rechercherParNumero(String numero) throws ClassNotFoundException, SQLException {
         String sql = "SELECT * FROM station WHERE numero = ?";
         StationModel stModel = null;
@@ -168,8 +167,7 @@ public class StationDao implements IdaO<StationModel> {
 
         return stModel;
     }
-    
-    
+
     @Override
     public List<StationModel> afficherTout() throws ClassNotFoundException, SQLException {
         List<StationModel> listStation = new ArrayList<>();
@@ -206,15 +204,9 @@ public class StationDao implements IdaO<StationModel> {
     public int getCapaciteParStationIdType(String num_station, String typeCarburant) throws SQLException, ClassNotFoundException {
         String sql = "SELECT capacite_gazoline, capacite_diesel FROM station WHERE numero = ?";
 
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            conn = DBConnection.getConnection();
-            ps = conn.prepareStatement(sql);
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, num_station);
-            rs = ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
                 if ("gazoline".equalsIgnoreCase(typeCarburant)) {
@@ -227,23 +219,16 @@ public class StationDao implements IdaO<StationModel> {
             } else {
                 throw new SQLException("Station introuvable avec NUMERO : " + num_station);
             }
-        } finally {
-            closeResources(conn, ps, rs);
         }
     }
 
-    public int getquantiteParStationIdType(int stationId, String typeCarburant) throws SQLException, ClassNotFoundException {
-        String sql = "SELECT quantite_gazoline, quantite_diesel FROM station WHERE id = ?";
+    public int getquantiteParNumStationType(String numStation, String typeCarburant) throws SQLException, ClassNotFoundException {
+        String sqlSelect = "SELECT quantite_gazoline, quantite_diesel FROM station WHERE numero = ?";
 
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            conn = DBConnection.getConnection();
-            ps = conn.prepareStatement(sql);
-            ps.setInt(1, stationId);
-            rs = ps.executeQuery();
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement psd = conn.prepareStatement(sqlSelect)) {
+           
+            psd.setString(1, numStation);
+            ResultSet rs = psd.executeQuery();
 
             if (rs.next()) {
                 if ("gazoline".equalsIgnoreCase(typeCarburant)) {
@@ -254,133 +239,28 @@ public class StationDao implements IdaO<StationModel> {
                     throw new IllegalArgumentException("Type de carburant invalide : " + typeCarburant);
                 }
             } else {
-                throw new SQLException("Station introuvable avec ID : " + stationId);
+                throw new SQLException("Station introuvable avec ID : " + numStation);
             }
-        } finally {
-            closeResources(conn, ps, rs);
         }
     }
 
-    public int retirerQuantite(int id, String type, int quantite) throws SQLException, ClassNotFoundException {
+    public int retirerQuantite(String numStation, String type, int quantite) throws SQLException, ClassNotFoundException {
         String sqlUpdate = null;
         if (type.equalsIgnoreCase("gazoline")) {
-            sqlUpdate = "UPDATE STATION SET quantite_gazoline = quantite_gazoline - ? WHERE id = ? AND quantite_gazoline >= ?";
+            sqlUpdate = "UPDATE STATION SET quantite_gazoline = quantite_gazoline - ? WHERE numero = ? AND quantite_gazoline >= ?";
         } else if (type.equalsIgnoreCase("diesel")) {
-            sqlUpdate = "UPDATE STATION SET quantite_diesel = quantite_diesel - ? WHERE id = ? AND quantite_diesel >= ?";
+            sqlUpdate = "UPDATE STATION SET quantite_diesel = quantite_diesel - ? WHERE numero = ? AND quantite_diesel >= ?";
         } else {
             throw new IllegalArgumentException("Type de carburant invalide : " + type);
         }
 
-        Connection conn = null;
-        PreparedStatement ps = null;
-
-        try {
-            conn = DBConnection.getConnection();
-            ps = conn.prepareStatement(sqlUpdate);
-
-            ps.setInt(1, quantite);
-            ps.setInt(2, id);
-            ps.setInt(3, quantite);
-
-            int rowsAffected = ps.executeUpdate();
-
-            if (rowsAffected == 0) {
-                throw new IllegalStateException("Impossible de retirer " + quantite + " gallons de " + type
-                        + " (station introuvable ou quantité insuffisante).");
-            }
-
-            return rowsAffected;
-        } finally {
-            closeResources(conn, ps, null);
-        }
-    }
-
-    public void ajouterQuantite(int stationId, String type, int quantite) throws SQLException, ClassNotFoundException {
-        String sql = "";
-        if (type.equalsIgnoreCase("diesel")) {
-            sql = "UPDATE Station SET quantite_diesel = quantite_diesel + ? WHERE id = ?";
-        } else if (type.equalsIgnoreCase("gazoline")) {
-            sql = "UPDATE Station SET quantite_gazoline = quantite_gazoline + ? WHERE id = ?";
-        } else {
-            throw new IllegalArgumentException("Type de carburant invalide : " + type);
-        }
-
-        Connection conn = null;
-        PreparedStatement ps = null;
-
-        try {
-            conn = DBConnection.getConnection();
-            ps = conn.prepareStatement(sql);
-            ps.setInt(1, quantite);
-            ps.setInt(2, stationId);
-            ps.executeUpdate();
-        } finally {
-            closeResources(conn, ps, null);
-        }
-    }
-
-    public boolean modifierQuantiteAvecChangementType(int stationId,
-            String ancienType,
-            String nouveauType,
-            int quantite) throws SQLException, ClassNotFoundException {
-        String sql1 = null;
-        String sql2 = null;
-
-        if (ancienType.equalsIgnoreCase("gazoline") && nouveauType.equalsIgnoreCase("diesel")) {
-            sql1 = "UPDATE Station SET quantite_gazoline = quantite_gazoline + ? WHERE id = ?";
-            sql2 = "UPDATE Station SET quantite_diesel = quantite_diesel - ? WHERE id = ?";
-        } else if (ancienType.equalsIgnoreCase("diesel") && nouveauType.equalsIgnoreCase("gazoline")) {
-            sql1 = "UPDATE Station SET quantite_diesel = quantite_diesel + ? WHERE id = ?";
-            sql2 = "UPDATE Station SET quantite_gazoline = quantite_gazoline - ? WHERE id = ?";
-        } else {
-            sql1 = "UPDATE Station SET quantite_" + ancienType.toLowerCase() + " = quantite_" + ancienType.toLowerCase() + " + ? WHERE id = ?";
-            sql2 = null;
-        }
-
-        Connection conn = null;
-        PreparedStatement stmt1 = null;
-        PreparedStatement stmt2 = null;
-
-        try {
-            conn = DBConnection.getConnection();
-            conn.setAutoCommit(false);
-
-            stmt1 = conn.prepareStatement(sql1);
-            stmt1.setInt(1, quantite);
-            stmt1.setInt(2, stationId);
-            stmt1.executeUpdate();
-
-            if (sql2 != null) {
-                stmt2 = conn.prepareStatement(sql2);
-                stmt2.setInt(1, quantite);
-                stmt2.setInt(2, stationId);
-                stmt2.executeUpdate();
-            }
-
-            conn.commit();
-            return true;
-        } catch (SQLException e) {
-            if (conn != null) {
-                try {
-                    conn.rollback();
-                } catch (SQLException ex) {
-                    logger.log(Level.SEVERE, "Erreur lors du rollback", ex);
-                }
-            }
-            logger.log(Level.SEVERE, "Erreur lors de la modification de quantité", e);
-            return false;
-        } finally {
-            try {
-                if (stmt1 != null) {
-                    stmt1.close();
-                }
-                if (stmt2 != null) {
-                    stmt2.close();
-                }
-            } catch (SQLException e) {
-                logger.log(Level.WARNING, "Erreur lors de la fermeture des statements", e);
-            }
-            closeResources(conn, null, null);
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement psd = conn.prepareStatement(sqlUpdate)) {
+          
+            psd.setInt(1, quantite);
+            psd.setString(2, numStation);
+            psd.setInt(3, quantite);
+             
+            return psd.executeUpdate();
         }
     }
 }
