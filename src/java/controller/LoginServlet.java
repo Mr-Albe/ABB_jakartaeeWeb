@@ -38,7 +38,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        processRequest(request, response);
+        request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 
     /**
@@ -94,7 +94,7 @@ public class LoginServlet extends HttpServlet {
             }
 
         } catch (ServletException | IOException | ClassNotFoundException | SQLException e) {
-            request.setAttribute("errorLogin", "Erreur de connection");
+            request.setAttribute("errorLogin", "Erreur de connection"+e);
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
     }

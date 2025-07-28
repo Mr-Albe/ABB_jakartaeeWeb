@@ -78,17 +78,17 @@ INSERT INTO approvisionnement (num_station, type_carburant, quantite, date_livra
 ('ST010', 'diesel', 1800, '2025-07-10', 'Total Haïti');
 
 -- Insertion des ventes
-INSERT INTO vente (id_station, type_carburant, quantite, prix_vente, date_vente, revenu) VALUES
-(1, 'gazoline', 500, 250.00, '2025-07-11', 125000.00),
-(2, 'diesel', 600, 200.00, '2025-07-11', 120000.00),
-(3, 'gazoline', 550, 240.00, '2025-07-11', 132000.00),
-(4, 'diesel', 500, 210.00, '2025-07-11', 105000.00),
-(5, 'gazoline', 600, 230.00, '2025-07-11', 138000.00),
-(6, 'diesel', 400, 220.00, '2025-07-11', 88000.00),
-(7, 'gazoline', 650, 250.00, '2025-07-11', 162500.00),
-(8, 'diesel', 700, 215.00, '2025-07-11', 150500.00),
-(9, 'gazoline', 480, 235.00, '2025-07-11', 112800.00),
-(10, 'diesel', 520, 205.00, '2025-07-11', 106600.00);
+INSERT INTO vente (num_station, type_carburant, quantite, prix_vente, date_vente, revenu) VALUES
+('ST001', 'gazoline', 500, 250.00, '2025-07-11', 125000.00),
+('ST002', 'diesel', 600, 200.00, '2025-07-11', 120000.00),
+('ST003', 'gazoline', 550, 240.00, '2025-07-11', 132000.00),
+('ST004', 'diesel', 500, 210.00, '2025-07-11', 105000.00),
+('ST005', 'gazoline', 600, 230.00, '2025-07-11', 138000.00),
+('ST006', 'diesel', 400, 220.00, '2025-07-11', 88000.00),
+('ST007', 'gazoline', 650, 250.00, '2025-07-11', 162500.00),
+('ST008', 'diesel', 700, 215.00, '2025-07-11', 150500.00),
+('ST009', 'gazoline', 480, 235.00, '2025-07-11', 112800.00),
+('ST010', 'diesel', 520, 205.00, '2025-07-11', 106600.00);
 
 -- Insertion des utilisateurs
 INSERT INTO users (username, password, role) VALUES
