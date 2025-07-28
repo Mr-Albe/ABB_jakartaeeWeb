@@ -95,9 +95,9 @@ public class StationDao implements IdaO<StationModel> {
     }
 
     @Override
-    public boolean supprimer(int id) throws SQLException, ClassNotFoundException,SQLIntegrityConstraintViolationException {
+    public boolean supprimer(int id) throws SQLException, ClassNotFoundException, SQLIntegrityConstraintViolationException {
         String sql = "DELETE FROM STATION WHERE id = ?";
-        try(Connection connect = DBConnection.getConnection(); PreparedStatement pds = connect.prepareStatement(sql)) {
+        try (Connection connect = DBConnection.getConnection(); PreparedStatement pds = connect.prepareStatement(sql)) {
             pds.setInt(1, id);
             return pds.executeUpdate() > 0;
         }
@@ -136,7 +136,6 @@ public class StationDao implements IdaO<StationModel> {
         return stModel;
     }
 
-    
     public StationModel rechercherParNumero(String numero) throws ClassNotFoundException, SQLException {
         String sql = "SELECT * FROM station WHERE numero = ?";
         StationModel stModel = null;
@@ -168,8 +167,7 @@ public class StationDao implements IdaO<StationModel> {
 
         return stModel;
     }
-    
-    
+
     @Override
     public List<StationModel> afficherTout() throws ClassNotFoundException, SQLException {
         List<StationModel> listStation = new ArrayList<>();
@@ -206,15 +204,9 @@ public class StationDao implements IdaO<StationModel> {
     public int getCapaciteParStationIdType(String num_station, String typeCarburant) throws SQLException, ClassNotFoundException {
         String sql = "SELECT capacite_gazoline, capacite_diesel FROM station WHERE numero = ?";
 
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            conn = DBConnection.getConnection();
-            ps = conn.prepareStatement(sql);
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, num_station);
-            rs = ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
                 if ("gazoline".equalsIgnoreCase(typeCarburant)) {
@@ -227,8 +219,6 @@ public class StationDao implements IdaO<StationModel> {
             } else {
                 throw new SQLException("Station introuvable avec NUMERO : " + num_station);
             }
-        } finally {
-            closeResources(conn, ps, rs);
         }
     }
 

@@ -14,7 +14,8 @@
 
 <%    // Initialisation des variables
     List<StationModel> listStation = new ArrayList<>();
-    String error = (String) session.getAttribute("erreur");
+    //...
+    String error = (String) request.getAttribute("erreur");
     if (error == null) {
         error = (String) session.getAttribute("error");
     }
@@ -27,20 +28,21 @@
         appModel.setDateLivraison(LocalDate.now());
     }
 
+    //...
     boolean isEdit = appModel.getId() != 0;
 
     // Formatage de la date pour l'input HTML
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     String dateValue = appModel.getDateLivraison() != null
-            ? appModel.getDateLivraison().format(formatter)
-            : LocalDate.now().format(formatter);
+            ? appModel.getDateLivraison().toString() //.format(formatter)
+            : LocalDate.now().toString(); //.format(formatter);
 
     // Chargement des stations
     try {
         StationDao stationDao = new StationDao();
         listStation = stationDao.afficherTout();
     } catch (Exception e) {
-        error = "Erreur lors du chargement des stations: " + e.getMessage();
+        error = "Erreur lors du chargement des stations: ";
     }
 %>
 
@@ -59,8 +61,8 @@
                         <%= isEdit ? "Modifier un approvisionnement" : "Nouvel Approvisionnement"%>
                     </h2>
                 </div>
-                    
-<!--                Affichage des erreurs -->
+
+                <!--                Affichage des erreurs -->
                 <% if (error != null && !error.isEmpty()) {%>
                 <div class="mb-8 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg animate-fade-in">
                     <div class="flex items-center">
@@ -71,7 +73,7 @@
                     </div>
                 </div>
                 <% session.removeAttribute("erreur");
-                   session.removeAttribute("error");
+                        //session.removeAttribute("error");
 
                     }%>
 
@@ -80,6 +82,7 @@
                     <form action="${pageContext.request.getContextPath()}/ApprovisionnementServlet" method="post" class="space-y-6">
                         <input type="hidden" name="action" value="<%= isEdit ? "edit" : "add"%>"/>
                         <% if (isEdit) {%>
+                        <!--// /       /  .....-->              
                         <input type="hidden" name="id" value="<%= appModel.getId()%>">
                             <% } %>
                             <!-- Responsive grid -->
@@ -90,15 +93,16 @@
                                     <div class="space-y-2">
                                         <label class="block text-sm font-medium text-gray-700">Station</label>
                                         <div class="relative">
-                                            <select name="stationId" class="w-full pl-3 pr-10 py-3 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-lg shadow-sm appearance-none bg-white bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cG9seWxpbmUgcG9pbnRzPSI2IDkgMTIgMTUgMTggOSI+PC9wb2x5bGluZT48L3N2Zz4=')] bg-no-repeat bg-[right_0.75rem_center] bg-[length:1.5em]">
+                                            <select name="num_station" class="w-full pl-3 pr-10 py-3 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-lg shadow-sm appearance-none bg-white bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cG9seWxpbmUgcG9pbnRzPSI2IDkgMTIgMTUgMTggOSI+PC9wb2x5bGluZT48L3N2Zz4=')] bg-no-repeat bg-[right_0.75rem_center] bg-[length:1.5em]">
                                                 <% if (isEdit) {%>
                                                 <option value="<%= appModel.getNumStation()%>" selected><%= appModel.getNumStation()%></option>
-                                                <% } else { %>
-                                                <option value="" disabled selected>Sélectionnez la station...</option>
+                                                <% } %>
+                                                <!-- le else supprime-->
+                                                <option value="" disabled>Sélectionnez la station...</option>
                                                 <% for (StationModel st : listStation) {%>  
                                                 <option value="<%= st.getNumero()%>"><%= st.getNumero()%> - <%= st.getCommune()%></option>
                                                 <% } %>
-                                                <% } %>
+                                                <!-- le else supprime-->
                                             </select>
                                         </div>
                                     </div>
@@ -109,12 +113,12 @@
                                         <select name="type" required class="w-full pl-3 pr-10 py-3 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-lg shadow-sm appearance-none bg-white bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cG9seWxpbmUgcG9pbnRzPSI2IDkgMTIgMTUgMTggOSI+PC9wb2x5bGluZT48L3N2Zz4=')] bg-no-repeat bg-[right_0.75rem_center] bg-[length:1.5em]">
                                             <% if (isEdit) {%>
                                             <option value="<%= appModel.getTypeCarburant()%>" selected><%= appModel.getTypeCarburant()%></option>
-                                            <% } else {%>
-                                            <option value="" disabled selected>Sélectionnez...</option>
+                                            <% }%>
+                                            <!--... -->
+                                            <option value="" disabled >Sélectionnez...</option>
                                             <option value="gazoline">⛽ Gazoline</option>
                                             <option value="diesel">⛽ Diesel</option>
-                                            <% }
-                                            %>
+                                            <!--....-->
                                         </select>
                                     </div>
                                 </div>
@@ -124,7 +128,7 @@
                                     <!-- Champ Quantité -->
                                     <div class="space-y-2">
                                         <label class="block text-sm font-medium text-gray-700">Quantité (gallons)</label>
-                                        <input type="number" name="quantite" min="1" max="5000000" required class="w-full px-4 py-3 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-lg shadow-sm transition duration-200"
+                                        <input type="number" name="quantiteGallons" min="1" max="5000000" required class="w-full px-4 py-3 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-lg shadow-sm transition duration-200"
                                                value="<%= isEdit ? appModel.getQuantite() : 1%>"
                                                >
                                     </div>
@@ -148,8 +152,14 @@
                             </div>
 
                             <!-- Bouton de soumission -->
-                            <div class="pt-4">
-                                <button type="submit" class="w-full flex justify-center items-center px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-medium rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <div class="pt-4 flex">
+                                <a href="${pageContext.request.contextPath}/ApprovisionnementServlet" class="w-full flex justify-center items-center m-3 px-4 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-medium rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" />
+                                    </svg>
+                                    Annuler
+                                </a>
+                                <button type="submit" class="w-full flex justify-center items-center px-4 m-3 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-medium rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
                                     </svg>

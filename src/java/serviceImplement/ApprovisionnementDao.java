@@ -58,15 +58,15 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
     public boolean modifier(ApprovisionnementModel app) throws ClassNotFoundException, SQLException {
         String sqlGetOld = "SELECT quantite, type_carburant, num_station FROM APPROVISIONNEMENT WHERE id = ?";
         String sqlUpdateApp = "UPDATE APPROVISIONNEMENT SET num_station = ?, type_carburant = ?, quantite = ?, date_livraison = ?, fournisseur = ? WHERE id = ?";
-        String sqlSubDiesel = "UPDATE STATION SET quantite_diesel = quantite_diesel - ? WHERE id = ?";
-        String sqlSubGazo = "UPDATE STATION SET quantite_gazoline = quantite_gazoline - ? WHERE id = ?";
-        String sqlAddDiesel = "UPDATE STATION SET quantite_diesel = quantite_diesel + ? WHERE id = ?";
-        String sqlAddGazo = "UPDATE STATION SET quantite_gazoline = quantite_gazoline + ? WHERE id = ?";
+        String sqlSubDiesel = "UPDATE STATION SET quantite_diesel = quantite_diesel - ? WHERE numero = ?";
+        String sqlSubGazo = "UPDATE STATION SET quantite_gazoline = quantite_gazoline - ? WHERE numero = ?";
+        String sqlAddDiesel = "UPDATE STATION SET quantite_diesel = quantite_diesel + ? WHERE numero = ?";
+        String sqlAddGazo = "UPDATE STATION SET quantite_gazoline = quantite_gazoline + ? WHERE numero = ?";
 
         try (Connection connect = DBConnection.getConnection()) {
             connect.setAutoCommit(false); 
 
-            // 1. Récupérer l'ancienne livraison
+            // 1. Recuperer l'ancienne livraison
             int ancienneQuantite = 0;
             String ancienType = "";
             String ancienNumStation = null;
@@ -81,7 +81,7 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
                 }
             }
 
-            // 2. Enlever l'ancienne quantité de la station selon ancien type
+            // 2. Enlever l'ancienne quantite de la station selon ancien type
             if (ancienType.equalsIgnoreCase("diesel")) {
                 try (PreparedStatement ps = connect.prepareStatement(sqlSubDiesel)) {
                     ps.setInt(1, ancienneQuantite);
@@ -96,7 +96,7 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
                 }
             }
 
-            // 3. Mettre à jour l'approvisionnement
+            // 3. Mettre a jour l'approvisionnement
             try (PreparedStatement ps = connect.prepareStatement(sqlUpdateApp)) {
                 ps.setString(1, app.getNumStation());
                 ps.setString(2, app.getTypeCarburant());
@@ -107,7 +107,7 @@ public class ApprovisionnementDao implements IdaO<ApprovisionnementModel> {
                 ps.executeUpdate();
             }
 
-            // 4. Ajouter la nouvelle quantité à la station selon nouveau type
+            // 4. Ajouter la nouvelle quantite a la station selon nouveau type
             if (app.getTypeCarburant().equalsIgnoreCase("diesel")) {
                 try (PreparedStatement ps = connect.prepareStatement(sqlAddDiesel)) {
                     ps.setInt(1, app.getQuantite());
