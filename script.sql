@@ -52,17 +52,26 @@ CREATE TABLE users (
 );
 
 -- Insertion des stations
-INSERT INTO station (numero, rue, commune, capacite_gazoline, capacite_diesel, quantite_gazoline, quantite_diesel) VALUES
-('ST001', 'Rue Capois', 'Port-au-Prince', 10000, 8000, 6000, 4000),
-('ST002', 'Avenue Christophe', 'Delmas', 12000, 9000, 7000, 5000),
-('ST003', 'Rue Panaméricaine', 'Pétion-Ville', 9000, 7000, 5000, 3000),
-('ST004', 'Boulevard Toussaint', 'Carrefour', 11000, 8500, 6500, 4500),
-('ST005', 'Rue Oswald Durand', 'Léogâne', 8000, 6000, 4000, 2000),
-('ST006', 'Avenue Martin Luther', 'Cité Soleil', 9500, 7500, 5000, 3500),
-('ST007', 'Rue Monseigneur Guilloux', 'Port-au-Prince', 10500, 8000, 6000, 4000),
-('ST008', 'Route de Frères', 'Pétion-Ville', 10000, 9000, 7000, 6000),
-('ST009', 'Rue du Centre', 'Jacmel', 8500, 6500, 3000, 2000),
-('ST010', 'Route Nationale #1', 'Gonaïves', 9500, 7000, 4500, 3000);
+INSERT INTO station (
+    numero, rue, commune, capacite_gazoline, capacite_diesel, quantite_gazoline, quantite_diesel
+) VALUES
+-- Cap-Haïtien
+('ST001', 'Rue 5', 'Cap-Haïtien', 10000, 8000, 6000, 4000),
+('ST002', 'Avenue 20', 'Cap-Haïtien', 12000, 9000, 7000, 5000),
+('ST003', 'Rue Antoine Simon', 'Cap-Haïtien', 9000, 7000, 5000, 3000),
+
+-- Limonade
+('ST004', 'Route Nationale #6', 'Limonade', 11000, 8500, 6500, 4500),
+('ST005', 'Rue Marché Public', 'Limonade', 8000, 6000, 4000, 2000),
+('ST006', 'Avenue des Étudiants', 'Limonade', 9500, 7500, 5000, 3500),
+
+-- Terrier-Rouge
+('ST007', 'Rue Principale', 'Terrier-Rouge', 10500, 8000, 6000, 4000),
+('ST008', 'Rue du Collège', 'Terrier-Rouge', 10000, 9000, 7000, 6000),
+
+-- Fort-Liberté
+('ST009', 'Rue de la Douane', 'Fort-Liberté', 8500, 6500, 3000, 2000),
+('ST010', 'Avenue de la Mer', 'Fort-Liberté', 9500, 7000, 4500, 3000);
 
 -- Insertion des approvisionnements
 INSERT INTO approvisionnement (num_station, type_carburant, quantite, date_livraison, fournisseur) VALUES
@@ -92,6 +101,7 @@ INSERT INTO vente (num_station, type_carburant, quantite, prix_vente, date_vente
 
 -- Insertion des utilisateurs
 INSERT INTO users (username, password, role) VALUES
+('Jaures', 'password', 'admin'),
 ('Bendy', 'password', 'admin'),
 ('Albe', 'password', 'admin'),
 ('Blemy', 'password', 'admin');

@@ -184,14 +184,14 @@
                         <div class="p-6">
                             <div class="w-32 h-32 mx-auto mb-4 rounded-full bg-blue-100 overflow-hidden">
                                 <img src="${pageContext.request.contextPath}/assets/Albikendy.jpg" 
-                                     alt="Bendy SERVILUS"
+                                     alt="Albikendy JEAN"
                                      class="w-full h-full object-cover rounded-full"/>
                             </div>
-                            <h3 class="text-xl font-bold mb-2">Bendy SERVILUS</h3>
+                            <h3 class="text-xl font-bold mb-2">Albikendy JEAN</h3>
                             <p class="text-secondary font-medium mb-2">Développeur</p>
                             <p class="text-gray-600">Spécialiste Java EE</p>
                             <div class="mt-4 flex justify-center space-x-4">
-                                <a href="#" class="text-blue-500 hover:text-blue-700">
+                                <a href="https://github.com/Mr-Albe" class="text-blue-500 hover:text-blue-700">
                                     <i class="fab fa-github"></i>
                                 </a>
                                 <a href="#" class="text-blue-500 hover:text-blue-700">
@@ -229,10 +229,10 @@
                         <div class="p-6">
                             <div class="w-32 h-32 mx-auto mb-4 rounded-full bg-blue-100 overflow-hidden">
                                 <img src="${pageContext.request.contextPath}/assets/Blemy.jpg" 
-                                     alt="Bendy SERVILUS"
+                                     alt="Blemy JOSEPH"
                                      class="w-full h-full object-cover rounded-full"/>
                             </div>
-                            <h3 class="text-xl font-bold mb-2">Bendy SERVILUS</h3>
+                            <h3 class="text-xl font-bold mb-2">Blemy JOSEPH</h3>
                             <p class="text-secondary font-medium mb-2">Développeur</p>
                             <p class="text-gray-600">Spécialiste Java EE</p>
                             <div class="mt-4 flex justify-center space-x-4">
