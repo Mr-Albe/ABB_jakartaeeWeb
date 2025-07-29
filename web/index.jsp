@@ -213,7 +213,7 @@
                             <p class="text-secondary font-medium mb-2">Développeur</p>
                             <p class="text-gray-600">Spécialiste Java EE</p>
                             <div class="mt-4 flex justify-center space-x-4">
-                                <a href="#" class="text-blue-500 hover:text-blue-700">
+                                <a href="https://github.com/bendy2509" class="text-blue-500 hover:text-blue-700">
                                     <i class="fab fa-github"></i>
                                 </a>
                                 <a href="#" class="text-blue-500 hover:text-blue-700">
